@@ -891,6 +891,12 @@ function chipToggle(container, label, on, color, cb) {
 }
 
 function buildFilters() {
+  // os chips são recriados a cada troca de idioma: limpar antes evita duplicar
+  ["#f-attrs", "#f-gens", "#f-tiers", "#f-pers", "#f-rank", "#f-stats"].forEach(id => {
+    const box = $(id);
+    if (box) box.innerHTML = "";
+  });
+
   const attrs = $("#f-attrs");
   ATTRS.forEach(a => chipToggle(attrs, a, true, ATTR_COLOR[a], (on, ev) => {
     soloToggle(state.filters.attrs, a, ATTRS, ev);
@@ -920,6 +926,7 @@ function buildFilters() {
     o.value = rankNum(r);
     rank.appendChild(o);
   });
+  rank.value = String(state.filters.rankMin || 0);
   rank.onchange = () => { state.filters.rankMin = +rank.value; applyFilters(); };
 
   const stats = $("#f-stats");
@@ -927,10 +934,12 @@ function buildFilters() {
     const row = el("div", "range-row");
     row.appendChild(el("label", null, s));
     const inp = el("input");
-    inp.type = "range"; inp.min = 0; inp.max = MAX_STAT[s]; inp.step = 50; inp.value = 0;
-    const out = el("span", "range-val", "0");
+    const cur = (state.filters.stats && state.filters.stats[s]) || 0;
+    inp.type = "range"; inp.min = 0; inp.max = MAX_STAT[s]; inp.step = 50; inp.value = cur;
+    const fmtN = v => Number(v).toLocaleString(LANG === "pt" ? "pt-BR" : "en-US");
+    const out = el("span", "range-val", fmtN(cur));
     inp.oninput = () => {
-      out.textContent = (+inp.value).toLocaleString("pt-BR");
+      out.textContent = fmtN(+inp.value);
       state.filters.stats[s] = +inp.value;
       applyFilters();
     };
