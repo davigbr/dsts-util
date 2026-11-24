@@ -4,6 +4,13 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Grafo de Digivoluções — Digimon Story: Time Stranger</title>
+<meta name="description" content="Grafo navegável dos 475 Digimon de Digimon Story: Time Stranger: stats Lv.99, fraquezas e resistências, tiers, rotas de digivolução e construtor de time." />
+<meta name="theme-color" content="#0d1017" />
+<meta property="og:title" content="Grafo de Digivoluções — Digimon Story: Time Stranger" />
+<meta property="og:description" content="475 Digimon, stats Lv.99, resistências, tiers, rotas de digivolução e construtor de time — tudo offline, num arquivo só." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d1017'/%3E%3Cpath d='M32 10 42 32 32 54 22 32Z' fill='%23ffc45c'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%230d1017'/%3E%3C/svg%3E" />
 <style>
   :root {
     --bg: #0d1017;
@@ -506,11 +513,13 @@
   .d-close { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 8px;
     color: var(--muted); font-size: 18px; line-height: 1; }
   .d-close:hover { background: rgba(255,255,255,.08); color: #fff; }
-  .d-close.d-back { right: 44px; font-size: 15px; font-weight: 700; color: #dfe6f0;
+  .d-close.d-back, .d-close.d-forward { font-size: 15px; font-weight: 700; color: #dfe6f0;
     background: rgba(255,255,255,.06); border: 1px solid var(--line2); }
-  .d-close.d-back:hover { background: rgba(255,255,255,.13); color: #fff; }
-  .d-close.d-back:disabled { opacity: .28; cursor: default; }
-  .d-close.d-back:disabled:hover { background: transparent; color: var(--muted); }
+  .d-close.d-back { right: 44px; }
+  .d-close.d-forward { right: 76px; }
+  .d-close.d-back:hover, .d-close.d-forward:hover { background: rgba(255,255,255,.13); color: #fff; }
+  .d-close.d-back:disabled, .d-close.d-forward:disabled { opacity: .28; cursor: default; background: transparent; }
+  .d-close.d-back:disabled:hover, .d-close.d-forward:disabled:hover { background: transparent; color: var(--muted); }
 
   .d-sec { margin-top: 18px; }
   .d-sec h3 { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
@@ -861,6 +870,7 @@ const state = {
   team: [],
   plan: [],
   history: [],
+  future: [],
   view: { colorBy: "attr", sizeBy: "fixed", labels: "auto", edges: "lineage", icons: "auto", layout: "layers", focus: true, listSort: "name" },
   selected: null,
   hover: null,
@@ -1531,9 +1541,12 @@ function showDetail(n, opts = {}) {
   if (typeof closeTeam === "function" && document.getElementById("team")?.classList.contains("open")) {
     closeTeam();
   }
-  if (!opts.fromHistory && state.selected && state.selected.name !== n.name) {
-    state.history.push(state.selected.name);
-    if (state.history.length > 40) state.history.shift();
+  if (!opts.nav) {
+    if (state.selected && state.selected.name !== n.name) {
+      state.history.push(state.selected.name);
+      if (state.history.length > 40) state.history.shift();
+    }
+    state.future = [];
   }
   state.selected = n;
   lineage = lineageOf(n.name);
@@ -1628,11 +1641,19 @@ function showDetail(n, opts = {}) {
   close.title = "Fechar (Esc)";
   close.onclick = () => closeDetail();
 
-  const back = el("button", "d-close d-back", "←");
   const hist = state.history || [];
+  const fut = state.future || [];
+  const back = el("button", "d-close d-back", "←");
   back.title = hist.length ? `Voltar para ${hist[hist.length - 1]} (Alt+←)` : "Sem histórico ainda";
   back.disabled = !hist.length;
   back.onclick = () => goBackDetail();
+
+  const fwd = el("button", "d-close d-forward", "→");
+  fwd.title = fut.length ? `Avançar para ${fut[fut.length - 1]} (Alt+→)` : "Nada à frente";
+  fwd.disabled = !fut.length;
+  fwd.onclick = () => goForwardDetail();
+
+  p.appendChild(fwd);
   p.appendChild(back);
   p.appendChild(close);
 
@@ -1807,15 +1828,20 @@ function skillRow(s) {
   return d;
 }
 
-function goBackDetail() {
-  const hist = state.history || [];
-  if (!hist.length) return;
-  const nm = hist.pop();
+function stepDetail(dir) {
+  const from = dir < 0 ? state.history : state.future;
+  const to = dir < 0 ? state.future : state.history;
+  if (!from || !from.length) return;
+  const nm = from.pop();
   const n = byName.get(nm);
   if (!n) return;
-  showDetail(n, { fromHistory: true });
+  if (state.selected) to.push(state.selected.name);
+  showDetail(n, { nav: true });
   centerOn(n.name, Math.max(state.cam.k, 0.9));
 }
+
+function goBackDetail() { stepDetail(-1); }
+function goForwardDetail() { stepDetail(1); }
 
 function closeDetail() {
   state.selected = null;
@@ -2222,6 +2248,11 @@ function initCanvasEvents() {
     if (e.altKey && e.key === "ArrowLeft") {
       e.preventDefault();
       goBackDetail();
+      return;
+    }
+    if (e.altKey && e.key === "ArrowRight") {
+      e.preventDefault();
+      goForwardDetail();
       return;
     }
     if ((e.key === "c" || e.key === "C") && document.activeElement.tagName !== "INPUT") {

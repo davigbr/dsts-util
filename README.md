@@ -127,3 +127,14 @@ Dados brutos em `data/` (`catalog.json` = catálogo dos 475, `digimon_md.json` =
 ## Repositório
 
 `github.com/davigbr/dsts-util` — `python3 scripts/build.py` gera `dist/index.html`. `pages/` e `pages_md/` (HTML bruto do Game8, ~85 MB) ficam fora do git; tudo o mais é versionado, inclusive `data/`, `img/` e o `dist/`.
+
+## Publicar no Netlify
+
+O site é o próprio `dist/index.html` — dados, artes e scripts inlinados, nenhuma requisição externa em runtime. O `netlify.toml` já aponta `publish = "dist"` e não roda build no deploy (o artefato versionado é o que vai ao ar).
+
+Duas formas:
+
+1. **Git** — New site → *Import an existing project* → GitHub → `davigbr/dsts-util`. Netlify lê o `netlify.toml`, publica `dist` e republica a cada push em `main`.
+2. **Drag and drop** — rode `python3 scripts/build.py` e arraste a pasta `dist` em app.netlify.com/drop.
+
+Antes de publicar: `python3 scripts/build.py` (gera `dist/index.html`) e `git push`. O `dist/robots.txt` libera indexação.

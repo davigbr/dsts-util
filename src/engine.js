@@ -49,6 +49,7 @@ const state = {
   team: [],
   plan: [],
   history: [],
+  future: [],
   view: { colorBy: "attr", sizeBy: "fixed", labels: "auto", edges: "lineage", icons: "auto", layout: "layers", focus: true, listSort: "name" },
   selected: null,
   hover: null,

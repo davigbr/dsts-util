@@ -1,0 +1,17 @@
+# Publica o artefato já construído — `python3 scripts/build.py` gera dist/index.html
+# com dados, artes e scripts inlinados (nada de requisição externa em runtime).
+[build]
+  publish = "dist"
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

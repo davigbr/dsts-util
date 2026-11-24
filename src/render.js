@@ -397,9 +397,12 @@ function showDetail(n, opts = {}) {
   if (typeof closeTeam === "function" && document.getElementById("team")?.classList.contains("open")) {
     closeTeam();
   }
-  if (!opts.fromHistory && state.selected && state.selected.name !== n.name) {
-    state.history.push(state.selected.name);
-    if (state.history.length > 40) state.history.shift();
+  if (!opts.nav) {
+    if (state.selected && state.selected.name !== n.name) {
+      state.history.push(state.selected.name);
+      if (state.history.length > 40) state.history.shift();
+    }
+    state.future = [];
   }
   state.selected = n;
   lineage = lineageOf(n.name);
@@ -494,11 +497,19 @@ function showDetail(n, opts = {}) {
   close.title = "Fechar (Esc)";
   close.onclick = () => closeDetail();
 
-  const back = el("button", "d-close d-back", "←");
   const hist = state.history || [];
+  const fut = state.future || [];
+  const back = el("button", "d-close d-back", "←");
   back.title = hist.length ? `Voltar para ${hist[hist.length - 1]} (Alt+←)` : "Sem histórico ainda";
   back.disabled = !hist.length;
   back.onclick = () => goBackDetail();
+
+  const fwd = el("button", "d-close d-forward", "→");
+  fwd.title = fut.length ? `Avançar para ${fut[fut.length - 1]} (Alt+→)` : "Nada à frente";
+  fwd.disabled = !fut.length;
+  fwd.onclick = () => goForwardDetail();
+
+  p.appendChild(fwd);
   p.appendChild(back);
   p.appendChild(close);
 
@@ -673,15 +684,20 @@ function skillRow(s) {
   return d;
 }
 
-function goBackDetail() {
-  const hist = state.history || [];
-  if (!hist.length) return;
-  const nm = hist.pop();
+function stepDetail(dir) {
+  const from = dir < 0 ? state.history : state.future;
+  const to = dir < 0 ? state.future : state.history;
+  if (!from || !from.length) return;
+  const nm = from.pop();
   const n = byName.get(nm);
   if (!n) return;
-  showDetail(n, { fromHistory: true });
+  if (state.selected) to.push(state.selected.name);
+  showDetail(n, { nav: true });
   centerOn(n.name, Math.max(state.cam.k, 0.9));
 }
+
+function goBackDetail() { stepDetail(-1); }
+function goForwardDetail() { stepDetail(1); }
 
 function closeDetail() {
   state.selected = null;
@@ -1088,6 +1104,11 @@ function initCanvasEvents() {
     if (e.altKey && e.key === "ArrowLeft") {
       e.preventDefault();
       goBackDetail();
+      return;
+    }
+    if (e.altKey && e.key === "ArrowRight") {
+      e.preventDefault();
+      goForwardDetail();
       return;
     }
     if ((e.key === "c" || e.key === "C") && document.activeElement.tagName !== "INPUT") {
