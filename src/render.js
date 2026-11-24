@@ -432,6 +432,21 @@ function rerenderAll() {
   draw();
 }
 
+const BULK_RANK = new Map();
+function bulkRankInit() {
+  if (BULK_RANK.size) return;
+  DATA.nodes.slice().sort((a, b) => bulk(b) - bulk(a))
+    .forEach((n, i) => BULK_RANK.set(n.slug, i + 1));
+}
+function compact(v) {
+  const loc = LANG === "pt" ? "pt-BR" : "en-US";
+  try {
+    return new Intl.NumberFormat(loc, { notation: "compact", maximumFractionDigits: 1 }).format(v);
+  } catch (e) {
+    return v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : Math.round(v).toLocaleString(loc);
+  }
+}
+
 function showDetail(n, opts = {}) {
   if (typeof closeTeam === "function" && document.getElementById("team")?.classList.contains("open")) {
     closeTeam();
@@ -573,7 +588,13 @@ function showDetail(n, opts = {}) {
     bars.appendChild(row);
   });
   sec.appendChild(bars);
-  const bl = el("div", "d-note", `Casco (HP × (DEF+SPI)): ${fmt(Math.round(bulk(n)))}`);
+  // durabilidade: valor bruto é ilegível (dezenas de milhões), então vai compacto + posição
+  const bv = bulk(n);
+  const brank = BULK_RANK.get(n.slug) || BULK_RANK.size;
+  const bl = el("div", "d-note", t("detail.bulk", {
+    v: compact(bv), rank: brank, total: DATA.nodes.length,
+  }));
+  bl.title = t("detail.bulkTip");
   sec.appendChild(bl);
   p.appendChild(sec);
 
@@ -1269,6 +1290,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   loadIcons();
   requestAnimationFrame(() => {
     resize();
+    bulkRankInit();
     computeLayout();
     fitToView(true);
     draw();

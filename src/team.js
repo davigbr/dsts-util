@@ -87,9 +87,9 @@ function teamSlot(name) {
   txt.appendChild(meta);
   row.appendChild(txt);
   row.onclick = () => openNodeBySlug(n.slug);
-  row.title = "abrir ficha";
+  row.title = t("team.openSheet");
   const rm = el("button", "tslot-x", "×");
-  rm.title = "remover do time";
+  rm.title = t("team.removeSlot");
   rm.onclick = ev => { ev.stopPropagation(); toggleTeam(n.name); };
   row.appendChild(rm);
   return row;

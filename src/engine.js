@@ -60,7 +60,7 @@ const state = {
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
 const el = (tag, cls, txt) => { const d = document.createElement(tag); if (cls) d.className = cls; if (txt != null) d.textContent = txt; return d; };
-const fmt = v => (v == null ? "—" : v.toLocaleString("pt-BR"));
+const fmt = v => (v == null ? "—" : v.toLocaleString(LANG === "pt" ? "pt-BR" : "en-US"));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function statVal(n, s) { return (n.stats && n.stats[s]) || 0; }

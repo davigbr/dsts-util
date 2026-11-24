@@ -279,7 +279,7 @@ function rtDraw() {
   if (!rt.world) {
     ctx.fillStyle = "#7c8798";
     ctx.font = "13px system-ui, sans-serif";
-    ctx.fillText("Sem rotas para desenhar.", 20, 34);
+    ctx.fillText(t("rt.empty"), 20, 34);
     return;
   }
   ctx.save();

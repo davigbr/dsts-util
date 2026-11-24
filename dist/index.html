@@ -1085,6 +1085,12 @@ const LOCALES = {
     "view.legendPowerGen": "strength (own-gen score 0 → 100)",
     "view.legendRange": "{by} (low → high)",
 
+    "detail.bulk": "Bulk — HP × (DEF+SPI): {v} · #{rank} of {total} for durability",
+    "detail.bulkTip": "How much punishment it absorbs before fainting: HP multiplied by the sum of DEF and SPI. Ranked against the whole roster.",
+    "view.focusHint": "Highlight the selected lineage",
+    "team.openSheet": "Open the profile",
+    "team.removeSlot": "Remove from the team",
+    "rt.empty": "No routes to draw.",
     "detail.stats": "Stats (Lv.99)",
     "detail.noSheet": "Profile not loaded yet — no stats.",
     "detail.weaknesses": "Weaknesses and resistances",
@@ -1429,6 +1435,12 @@ const LOCALES = {
     "view.legendPowerGen": "força (score na geração, 0 → 100)",
     "view.legendRange": "{by} (baixo → alto)",
 
+    "detail.bulk": "Casco — HP × (DEF+SPI): {v} · #{rank} de {total} em durabilidade",
+    "detail.bulkTip": "Quanto de pancada aguenta antes de cair: HP multiplicado pela soma de DEF e SPI. Comparado com o roster inteiro.",
+    "view.focusHint": "Destacar a linhagem do selecionado",
+    "team.openSheet": "Abrir a ficha",
+    "team.removeSlot": "Remover do time",
+    "rt.empty": "Sem rotas para desenhar.",
     "detail.stats": "Stats (Lv.99)",
     "detail.noSheet": "Ficha ainda não carregada — sem stats.",
     "detail.weaknesses": "Fraquezas e resistências",
@@ -1732,7 +1744,7 @@ const state = {
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
 const el = (tag, cls, txt) => { const d = document.createElement(tag); if (cls) d.className = cls; if (txt != null) d.textContent = txt; return d; };
-const fmt = v => (v == null ? "—" : v.toLocaleString("pt-BR"));
+const fmt = v => (v == null ? "—" : v.toLocaleString(LANG === "pt" ? "pt-BR" : "en-US"));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function statVal(n, s) { return (n.stats && n.stats[s]) || 0; }
@@ -2427,6 +2439,21 @@ function rerenderAll() {
   draw();
 }
 
+const BULK_RANK = new Map();
+function bulkRankInit() {
+  if (BULK_RANK.size) return;
+  DATA.nodes.slice().sort((a, b) => bulk(b) - bulk(a))
+    .forEach((n, i) => BULK_RANK.set(n.slug, i + 1));
+}
+function compact(v) {
+  const loc = LANG === "pt" ? "pt-BR" : "en-US";
+  try {
+    return new Intl.NumberFormat(loc, { notation: "compact", maximumFractionDigits: 1 }).format(v);
+  } catch (e) {
+    return v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : Math.round(v).toLocaleString(loc);
+  }
+}
+
 function showDetail(n, opts = {}) {
   if (typeof closeTeam === "function" && document.getElementById("team")?.classList.contains("open")) {
     closeTeam();
@@ -2568,7 +2595,13 @@ function showDetail(n, opts = {}) {
     bars.appendChild(row);
   });
   sec.appendChild(bars);
-  const bl = el("div", "d-note", `Casco (HP × (DEF+SPI)): ${fmt(Math.round(bulk(n)))}`);
+  // durabilidade: valor bruto é ilegível (dezenas de milhões), então vai compacto + posição
+  const bv = bulk(n);
+  const brank = BULK_RANK.get(n.slug) || BULK_RANK.size;
+  const bl = el("div", "d-note", t("detail.bulk", {
+    v: compact(bv), rank: brank, total: DATA.nodes.length,
+  }));
+  bl.title = t("detail.bulkTip");
   sec.appendChild(bl);
   p.appendChild(sec);
 
@@ -3264,6 +3297,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   loadIcons();
   requestAnimationFrame(() => {
     resize();
+    bulkRankInit();
     computeLayout();
     fitToView(true);
     draw();
@@ -3423,9 +3457,9 @@ function teamSlot(name) {
   txt.appendChild(meta);
   row.appendChild(txt);
   row.onclick = () => openNodeBySlug(n.slug);
-  row.title = "abrir ficha";
+  row.title = t("team.openSheet");
   const rm = el("button", "tslot-x", "×");
-  rm.title = "remover do time";
+  rm.title = t("team.removeSlot");
   rm.onclick = ev => { ev.stopPropagation(); toggleTeam(n.name); };
   row.appendChild(rm);
   return row;
@@ -3862,7 +3896,7 @@ function rtDraw() {
   if (!rt.world) {
     ctx.fillStyle = "#7c8798";
     ctx.font = "13px system-ui, sans-serif";
-    ctx.fillText("Sem rotas para desenhar.", 20, 34);
+    ctx.fillText(t("rt.empty"), 20, 34);
     return;
   }
   ctx.save();
