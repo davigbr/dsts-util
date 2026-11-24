@@ -1,0 +1,11 @@
+# material bruto de raspagem (reproduzível com scripts/harvest_*.py)
+pages/
+pages_md/
+
+# lixo de sistema / ambiente
+.DS_Store
+__pycache__/
+*.pyc
+node_modules/
+.venv/
+venv/
