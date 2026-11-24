@@ -259,6 +259,68 @@
   #toggle-team .badge { font-size: 10px; min-width: 15px; height: 15px; border-radius: 8px;
     background: var(--accent); color: #1a1206; display: none; place-items: center; font-weight: 700; padding: 0 4px; }
   #toggle-team.has .badge { display: grid; }
+  /* ---- página inicial ---- */
+  .home-btn { font-size: 15px; padding: 0 9px; }
+  #home { position: fixed; inset: 0; z-index: 80; background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(255,196,92,.10), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(74,163,223,.10), transparent 55%),
+      #0b0e15;
+    display: none; overflow-y: auto; }
+  #home.open { display: block; }
+  .home-wrap { max-width: 940px; margin: 0 auto; padding: 56px 22px 60px; }
+  .home-hero h1 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.1; margin: 14px 0 12px; letter-spacing: -.8px; }
+  .home-hero p { font-size: 14.5px; line-height: 1.65; color: var(--muted); max-width: 660px; margin: 0 0 18px; }
+  .hh-brand { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); }
+  .hh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .home-stats { display: flex; flex-wrap: wrap; gap: 34px; margin: 6px 0 26px; }
+  .hs { display: flex; flex-direction: column; }
+  .hs b { font-size: 21px; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+  .hs span { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .home-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn.lg { height: 42px; padding: 0 20px; font-size: 13.5px; border-radius: 11px; }
+  .btn.primary { background: linear-gradient(180deg, #ffd27a, #f0b23f); color: #21160a; border: 0; font-weight: 700; }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .home-skip { margin-top: 20px; font-size: 12px; color: #8b98ab; text-decoration: underline;
+    text-underline-offset: 3px; }
+  .home-skip:hover { color: var(--fg); }
+  .home-feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 10px;
+    margin-top: 34px; }
+  .hf { display: flex; gap: 11px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: rgba(255,255,255,.028); }
+  .hf-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none;
+    font-size: 13px; color: var(--accent); background: rgba(255,196,92,.10); border: 1px solid rgba(255,196,92,.22); }
+  .hf b { font-size: 12.5px; }
+  .hf p { margin: 3px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+  .home-foot { margin: 26px 0 0; font-size: 11.5px; color: #6f7c8d; }
+
+  /* ---- tutorial ---- */
+  #tour { position: fixed; inset: 0; z-index: 90; display: none; pointer-events: auto;
+    background: transparent; }
+  #tour.on { display: block; }
+  #tour-hole { position: absolute; display: none; border-radius: 10px; pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(5,8,13,.74), 0 0 0 2px rgba(255,196,92,.55);
+    transition: left .18s ease, top .18s ease, width .18s ease, height .18s ease; }
+  #tour-card { position: absolute; pointer-events: auto; background: #141a25; border: 1px solid var(--line2);
+    border-radius: 13px; box-shadow: var(--shadow); padding: 13px 14px 12px; }
+  .tc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .tc-step { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent); font-weight: 700; }
+  .tc-x { width: 22px; height: 22px; border-radius: 6px; color: var(--muted); font-size: 15px; line-height: 1; }
+  .tc-x:hover { background: rgba(255,255,255,.08); color: #fff; }
+  #tour-card h3 { margin: 7px 0 5px; font-size: 14.5px; letter-spacing: -.2px; }
+  #tour-card p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  .tc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+  .tc-dots { display: flex; gap: 4px; }
+  .tc-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); }
+  .tc-dots i.on { background: var(--accent); width: 14px; border-radius: 3px; }
+  .tc-btns { display: flex; gap: 6px; }
+  .tc-btns .btn { height: 28px; padding: 0 11px; font-size: 12px; }
+  @media (max-width: 720px) {
+    .home-wrap { padding: 34px 16px 44px; }
+    .home-stats { gap: 16px; }
+    .hs b { font-size: 18px; }
+    #tour-card { max-width: calc(100vw - 24px); }
+  }
   #compare { position: fixed; inset: 0; z-index: 42; background: #0f131b; display: none; flex-direction: column; }
   #compare.open { display: flex; }
   .cmp-top { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
@@ -661,6 +723,7 @@
   </div>
 
   <div class="hbtns">
+    <button class="hbtn home-btn" id="home-btn" data-i18n-title="nav.homeTip" title="What this app does">⌂</button>
     <button class="hbtn on" id="toggle-filters" data-i18n="nav.filters">Filters</button>
     <button class="hbtn" id="toggle-list" data-i18n="nav.list" data-i18n-title="nav.listTip" title="Filtered Digimon as a list">List</button>
     <button class="hbtn" id="toggle-compare" data-i18n-title="nav.compareTip" title="Compare two Digimon (C)"><span class="lbl" data-i18n="nav.compare">Compare</span></button>
@@ -749,6 +812,29 @@
 </div>
 
 <aside id="detail"></aside>
+
+<div id="home">
+  <div class="home-wrap">
+    <div class="home-hero">
+      <div class="hh-brand"><span class="hh-dot"></span><span data-i18n="app.brand">Digivolution</span></div>
+      <h1 data-i18n="home.title">Every digivolution, on one map</h1>
+      <p data-i18n="home.sub">All 475 Digimon of Digimon Story: Time Stranger in a graph you can drag, with Lv.99 stats, weaknesses and resistances, two strength scales, team building and evolution routes — offline, in a single file.</p>
+      <div class="home-stats" id="home-stats"></div>
+      <div class="home-cta">
+        <button class="btn primary lg" id="home-start" data-i18n="home.start">Open the graph</button>
+        <button class="btn lg" id="home-tour" data-i18n="home.tour">Take the 1-minute tour</button>
+      </div>
+      <button class="home-skip" id="home-skip" data-i18n="home.skip">Skip the intro</button>
+    </div>
+    <div class="home-feats" id="home-feats"></div>
+    <p class="home-foot" data-i18n="home.foot">No account, no tracking — everything runs in your browser and works without a connection.</p>
+  </div>
+</div>
+
+<div id="tour">
+  <div id="tour-hole"></div>
+  <div id="tour-card"></div>
+</div>
 
 <div id="compare">
   <div class="cmp-top">
@@ -842,7 +928,8 @@
       <option value="force" data-i18n="view.force">Strength (explore)</option>
     </select>
   </div>
-  <label class="checkline"><input type="checkbox" id="view-focus" checked /> destacar linhagem do selecionado</label>
+  <label class="checkline"><input type="checkbox" id="view-focus" checked /> <span data-i18n="view.focusHint">highlight the selected lineage</span></label>
+  <button class="btn wide" id="replay-tour" data-i18n="tour.replay">Show the tour again</button>
 </div>
 
 <script src="i18n.js"></script>
@@ -851,6 +938,7 @@
 <script src="team.js"></script>
 <script src="routes.js"></script>
 <script src="compare.js"></script>
+<script src="onboarding.js"></script>
 <script>
   // abas do painel esquerdo
   document.querySelectorAll(".tab").forEach(t => {

@@ -175,6 +175,7 @@ team = open(os.path.join(ROOT, "src", "team.js"), encoding="utf-8").read()
 routes = open(os.path.join(ROOT, "src", "routes.js"), encoding="utf-8").read()
 cmp = open(os.path.join(ROOT, "src", "compare.js"), encoding="utf-8").read()
 i18n = open(os.path.join(ROOT, "src", "i18n.js"), encoding="utf-8").read()
+onb = open(os.path.join(ROOT, "src", "onboarding.js"), encoding="utf-8").read()
 
 out = tpl.replace('<script src="engine.js"></script>',
                   "<script>\nconst DATA = " + data_js + ";\n" + eng.split("const DATA = __DATA__;\n", 1)[-1] + "\n</script>")
@@ -183,6 +184,7 @@ out = out.replace('<script src="team.js"></script>', "<script>\n" + team + "\n</
 out = out.replace('<script src="routes.js"></script>', "<script>\n" + routes + "\n</script>")
 out = out.replace('<script src="compare.js"></script>', "<script>\n" + cmp + "\n</script>")
 out = out.replace('<script src="i18n.js"></script>', "<script>\n" + i18n + "\n</script>")
+out = out.replace('<script src="onboarding.js"></script>', "<script>\n" + onb + "\n</script>")
 os.makedirs(os.path.join(ROOT, "dist"), exist_ok=True)
 dst = os.path.join(ROOT, "dist", "index.html")
 open(dst, "w", encoding="utf-8").write(out)

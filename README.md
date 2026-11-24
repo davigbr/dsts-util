@@ -149,3 +149,9 @@ O app está em **inglês**. Toda string de interface sai de um dicionário em `s
 - para um idioma novo, copie o bloco `en` em `LOCALES`, traduza e acrescente `{ id, label }` em `LANGS`. Nada mais muda.
 
 Os nomes de Digimon, skills, traits e descrições vêm dos dados e permanecem como estão.
+
+## Página inicial e tutorial
+
+Na primeira visita o app abre uma **página inicial** (`src/onboarding.js`): o que ele faz, os números do catálogo (475 Digimon, 1.114 digivoluções, 2.236 skills, 11 elementos), seis cartões de recurso e dois botões — **Open the graph** e **Take the 1-minute tour**. A escolha fica em `localStorage` (`dvz.home`); o botão **⌂** no cabeçalho reabre a página, e **Vista → Show the tour again** repete o tutorial.
+
+O tutorial é um coach-mark com recorte (spotlight) sobre o elemento real: 10 passos que vão do campo de busca ao seletor de idioma, abrindo sozinhos o painel de filtros, uma ficha e o painel de força quando o passo precisa deles. `teclado`: → / Enter avança, ← volta, Esc sai. Se o alvo ocupa quase a tela toda, o recorte é desligado e o cartão centraliza. Tudo sai do `LOCALES` (en/pt) como o resto da interface.

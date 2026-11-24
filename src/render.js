@@ -427,6 +427,7 @@ function rerenderAll() {
   if (document.getElementById("compare")?.classList.contains("open")) renderCompare();
   const hmain = document.getElementById("hint-main");
   if (hmain) hmain.innerHTML = t("hint.canvas");
+  if (typeof renderHome === "function") renderHome();
   updateTeamBadge();
   draw();
 }
@@ -1271,6 +1272,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     computeLayout();
     fitToView(true);
     draw();
+    if (typeof initOnboarding === "function") initOnboarding();
   });
 
 

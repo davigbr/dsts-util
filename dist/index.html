@@ -259,6 +259,68 @@
   #toggle-team .badge { font-size: 10px; min-width: 15px; height: 15px; border-radius: 8px;
     background: var(--accent); color: #1a1206; display: none; place-items: center; font-weight: 700; padding: 0 4px; }
   #toggle-team.has .badge { display: grid; }
+  /* ---- página inicial ---- */
+  .home-btn { font-size: 15px; padding: 0 9px; }
+  #home { position: fixed; inset: 0; z-index: 80; background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(255,196,92,.10), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(74,163,223,.10), transparent 55%),
+      #0b0e15;
+    display: none; overflow-y: auto; }
+  #home.open { display: block; }
+  .home-wrap { max-width: 940px; margin: 0 auto; padding: 56px 22px 60px; }
+  .home-hero h1 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.1; margin: 14px 0 12px; letter-spacing: -.8px; }
+  .home-hero p { font-size: 14.5px; line-height: 1.65; color: var(--muted); max-width: 660px; margin: 0 0 18px; }
+  .hh-brand { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); }
+  .hh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .home-stats { display: flex; flex-wrap: wrap; gap: 34px; margin: 6px 0 26px; }
+  .hs { display: flex; flex-direction: column; }
+  .hs b { font-size: 21px; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+  .hs span { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .home-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn.lg { height: 42px; padding: 0 20px; font-size: 13.5px; border-radius: 11px; }
+  .btn.primary { background: linear-gradient(180deg, #ffd27a, #f0b23f); color: #21160a; border: 0; font-weight: 700; }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .home-skip { margin-top: 20px; font-size: 12px; color: #8b98ab; text-decoration: underline;
+    text-underline-offset: 3px; }
+  .home-skip:hover { color: var(--fg); }
+  .home-feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 10px;
+    margin-top: 34px; }
+  .hf { display: flex; gap: 11px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: rgba(255,255,255,.028); }
+  .hf-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none;
+    font-size: 13px; color: var(--accent); background: rgba(255,196,92,.10); border: 1px solid rgba(255,196,92,.22); }
+  .hf b { font-size: 12.5px; }
+  .hf p { margin: 3px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+  .home-foot { margin: 26px 0 0; font-size: 11.5px; color: #6f7c8d; }
+
+  /* ---- tutorial ---- */
+  #tour { position: fixed; inset: 0; z-index: 90; display: none; pointer-events: auto;
+    background: transparent; }
+  #tour.on { display: block; }
+  #tour-hole { position: absolute; display: none; border-radius: 10px; pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(5,8,13,.74), 0 0 0 2px rgba(255,196,92,.55);
+    transition: left .18s ease, top .18s ease, width .18s ease, height .18s ease; }
+  #tour-card { position: absolute; pointer-events: auto; background: #141a25; border: 1px solid var(--line2);
+    border-radius: 13px; box-shadow: var(--shadow); padding: 13px 14px 12px; }
+  .tc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .tc-step { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent); font-weight: 700; }
+  .tc-x { width: 22px; height: 22px; border-radius: 6px; color: var(--muted); font-size: 15px; line-height: 1; }
+  .tc-x:hover { background: rgba(255,255,255,.08); color: #fff; }
+  #tour-card h3 { margin: 7px 0 5px; font-size: 14.5px; letter-spacing: -.2px; }
+  #tour-card p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  .tc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+  .tc-dots { display: flex; gap: 4px; }
+  .tc-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); }
+  .tc-dots i.on { background: var(--accent); width: 14px; border-radius: 3px; }
+  .tc-btns { display: flex; gap: 6px; }
+  .tc-btns .btn { height: 28px; padding: 0 11px; font-size: 12px; }
+  @media (max-width: 720px) {
+    .home-wrap { padding: 34px 16px 44px; }
+    .home-stats { gap: 16px; }
+    .hs b { font-size: 18px; }
+    #tour-card { max-width: calc(100vw - 24px); }
+  }
   #compare { position: fixed; inset: 0; z-index: 42; background: #0f131b; display: none; flex-direction: column; }
   #compare.open { display: flex; }
   .cmp-top { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
@@ -661,6 +723,7 @@
   </div>
 
   <div class="hbtns">
+    <button class="hbtn home-btn" id="home-btn" data-i18n-title="nav.homeTip" title="What this app does">⌂</button>
     <button class="hbtn on" id="toggle-filters" data-i18n="nav.filters">Filters</button>
     <button class="hbtn" id="toggle-list" data-i18n="nav.list" data-i18n-title="nav.listTip" title="Filtered Digimon as a list">List</button>
     <button class="hbtn" id="toggle-compare" data-i18n-title="nav.compareTip" title="Compare two Digimon (C)"><span class="lbl" data-i18n="nav.compare">Compare</span></button>
@@ -749,6 +812,29 @@
 </div>
 
 <aside id="detail"></aside>
+
+<div id="home">
+  <div class="home-wrap">
+    <div class="home-hero">
+      <div class="hh-brand"><span class="hh-dot"></span><span data-i18n="app.brand">Digivolution</span></div>
+      <h1 data-i18n="home.title">Every digivolution, on one map</h1>
+      <p data-i18n="home.sub">All 475 Digimon of Digimon Story: Time Stranger in a graph you can drag, with Lv.99 stats, weaknesses and resistances, two strength scales, team building and evolution routes — offline, in a single file.</p>
+      <div class="home-stats" id="home-stats"></div>
+      <div class="home-cta">
+        <button class="btn primary lg" id="home-start" data-i18n="home.start">Open the graph</button>
+        <button class="btn lg" id="home-tour" data-i18n="home.tour">Take the 1-minute tour</button>
+      </div>
+      <button class="home-skip" id="home-skip" data-i18n="home.skip">Skip the intro</button>
+    </div>
+    <div class="home-feats" id="home-feats"></div>
+    <p class="home-foot" data-i18n="home.foot">No account, no tracking — everything runs in your browser and works without a connection.</p>
+  </div>
+</div>
+
+<div id="tour">
+  <div id="tour-hole"></div>
+  <div id="tour-card"></div>
+</div>
 
 <div id="compare">
   <div class="cmp-top">
@@ -842,7 +928,8 @@
       <option value="force" data-i18n="view.force">Strength (explore)</option>
     </select>
   </div>
-  <label class="checkline"><input type="checkbox" id="view-focus" checked /> destacar linhagem do selecionado</label>
+  <label class="checkline"><input type="checkbox" id="view-focus" checked /> <span data-i18n="view.focusHint">highlight the selected lineage</span></label>
+  <button class="btn wide" id="replay-tour" data-i18n="tour.replay">Show the tour again</button>
 </div>
 
 <script>
@@ -853,6 +940,59 @@
    ============================================================ */
 const LOCALES = {
   en: {
+    "nav.homeTip": "What this app does",
+
+    "home.title": "Every digivolution, on one map",
+    "home.sub": "All 475 Digimon of Digimon Story: Time Stranger in a graph you can drag, with Lv.99 stats, weaknesses and resistances, two strength scales, team building and evolution routes — offline, in a single file.",
+    "home.start": "Open the graph",
+    "home.tour": "Take the 1-minute tour",
+    "home.skip": "Skip the intro",
+    "home.foot": "No account, no tracking — everything runs in your browser and works without a connection.",
+    "home.statNodes": "Digimon",
+    "home.statEdges": "digivolutions",
+    "home.statSkills": "skills",
+    "home.statElems": "elements",
+    "home.map.t": "A map that actually moves",
+    "home.map.d": "Drag, zoom and click. Nine generations in columns, 1,100+ evolution links, each node carrying its element color and portrait.",
+    "home.profile.t": "Full profile on click",
+    "home.profile.d": "Lv.99 stats, personality, rank, traits, signature and learnable skills, plus every element it is weak to, resists or ignores.",
+    "home.power.t": "Two strength scales",
+    "home.power.d": "A tier within its own generation and another across the whole roster — a Champion is never punished for not being a Mega.",
+    "home.team.t": "Team builder",
+    "home.team.d": "Three slots that show the attribute triangle, your elemental coverage, shared weaknesses and what breaks the team.",
+    "home.routes.t": "Evolution routes",
+    "home.routes.d": "From your current team, four algorithms suggest balanced targets and the exact steps with rank and stat requirements.",
+    "home.compare.t": "Side-by-side compare",
+    "home.compare.d": "Two Digimon, stat by stat, with deltas, tiers in both scales and the weaknesses only one of them has.",
+
+    "tour.replay": "Show the tour again",
+    "tour.step": "Step {n} of {total}",
+    "tour.skip": "Skip the tour",
+    "tour.next": "Next",
+    "tour.back": "Back",
+    "tour.done": "Finish",
+    "tour.finished": "Tour finished — the ⌂ button in the header shows it again.",
+    "tour.search.t": "Start typing",
+    "tour.search.d": "Search by Digimon, skill or trait. Enter opens the first result; the name also works inside filters.",
+    "tour.filters.t": "Filters",
+    "tour.filters.d": "Attribute, generation, tier and personality. Click to add several — the graph and the list update at once.",
+    "tour.graph.t": "The map",
+    "tour.graph.d": "Wheel zooms, drag moves, click a node to open its profile. The 0 key reframes everything.",
+    "tour.profile.t": "The profile",
+    "tour.profile.d": "Everything in one panel: stats, resistances, evolution line, skills. The ← → arrows walk back and forth between profiles you opened.",
+    "tour.power.t": "Power, two readings",
+    "tour.power.d": "Left: rank among Digimon of the same generation. Right: rank across all 475. That is why a Rookie can be tier A here and D there.",
+    "tour.compare.t": "Compare",
+    "tour.compare.d": "Put two Digimon side by side — stats, resistances and skills — with the differences marked.",
+    "tour.team.t": "Build a team",
+    "tour.team.d": "Add up to three Digimon and see the triangle, coverage and shared weaknesses of the set.",
+    "tour.routes.t": "Evolution routes",
+    "tour.routes.d": "With a team, get the best balanced combinations and the path to each target.",
+    "tour.view.t": "View",
+    "tour.view.d": "Change what color and node size mean, hide labels, switch layouts.",
+    "tour.lang.t": "Language",
+    "tour.lang.d": "English by default; Portuguese is one click away. Your choice is remembered.",
+
     "app.title": "Digivolution Graph — Digimon Story: Time Stranger",
     "app.brand": "Digivolution",
     "app.subtitle": "Digimon Story: Time Stranger · {count}",
@@ -1144,6 +1284,59 @@ const LOCALES = {
   },
 
   pt: {
+    "nav.homeTip": "O que este app faz",
+
+    "home.title": "Todas as digivoluções, num mapa só",
+    "home.sub": "Os 475 Digimon de Digimon Story: Time Stranger num grafo que você arrasta, com stats de Lv.99, fraquezas e resistências, duas escalas de força, construtor de time e rotas de evolução — offline, num arquivo só.",
+    "home.start": "Abrir o grafo",
+    "home.tour": "Fazer o tour de 1 minuto",
+    "home.skip": "Pular a introdução",
+    "home.foot": "Sem conta, sem rastreamento — tudo roda no seu navegador e funciona sem conexão.",
+    "home.statNodes": "Digimon",
+    "home.statEdges": "digivoluções",
+    "home.statSkills": "skills",
+    "home.statElems": "elementos",
+    "home.map.t": "Um mapa que se mexe",
+    "home.map.d": "Arraste, dê zoom, clique. Nove gerações em colunas, mais de 1.100 ligações de evolução, cada nó com a cor do atributo e o retrato.",
+    "home.profile.t": "Ficha completa no clique",
+    "home.profile.d": "Stats de Lv.99, personalidade, rank, traits, skills assinatura e aprendíveis, e todos os elementos a que é fraco, resiste ou é imune.",
+    "home.power.t": "Duas escalas de força",
+    "home.power.d": "Um tier dentro da própria geração e outro no roster inteiro — um Champion não é penalizado por não ser Mega.",
+    "home.team.t": "Construtor de time",
+    "home.team.d": "Três slots que mostram o triângulo de atributos, sua cobertura elemental, fraquezas compartilhadas e o que fura o time.",
+    "home.routes.t": "Rotas de evolução",
+    "home.routes.d": "A partir do time atual, quatro algoritmos sugerem alvos equilibrados e os passos exatos com rank e stats exigidos.",
+    "home.compare.t": "Comparação lado a lado",
+    "home.compare.d": "Dois Digimon, stat por stat, com diferenças, tiers nas duas escalas e as fraquezas que só um deles tem.",
+
+    "tour.replay": "Ver o tour de novo",
+    "tour.step": "Passo {n} de {total}",
+    "tour.skip": "Pular o tour",
+    "tour.next": "Próximo",
+    "tour.back": "Voltar",
+    "tour.done": "Concluir",
+    "tour.finished": "Tour concluído — clique no ⌂ do cabeçalho para ver de novo.",
+    "tour.search.t": "Comece digitando",
+    "tour.search.d": "Busque por Digimon, skill ou trait. Enter abre o primeiro resultado; o nome também vale dentro dos filtros.",
+    "tour.filters.t": "Filtros",
+    "tour.filters.d": "Atributo, geração, tier e personalidade. Clique para somar vários — o grafo e a lista mudam na hora.",
+    "tour.graph.t": "O mapa",
+    "tour.graph.d": "A roda dá zoom, arrastar move, clicar num nó abre a ficha. A tecla 0 reenquadra tudo.",
+    "tour.profile.t": "A ficha",
+    "tour.profile.d": "Tudo num painel: stats, resistências, linha de evolução, skills. As setas ← → voltam e avançam entre as fichas que você abriu.",
+    "tour.power.t": "Poder, duas leituras",
+    "tour.power.d": "À esquerda: posição entre os Digimon da mesma geração. À direita: posição nos 475. Por isso um Rookie pode ser tier A aqui e D ali.",
+    "tour.compare.t": "Comparar",
+    "tour.compare.d": "Coloque dois Digimon lado a lado — stats, resistências e skills — com as diferenças marcadas.",
+    "tour.team.t": "Montar um time",
+    "tour.team.d": "Adicione até três Digimon e veja o triângulo, a cobertura e as fraquezas compartilhadas do conjunto.",
+    "tour.routes.t": "Rotas de evolução",
+    "tour.routes.d": "Com um time, receba as melhores combinações equilibradas e o caminho até cada alvo.",
+    "tour.view.t": "Vista",
+    "tour.view.d": "Mude o que cor e tamanho do nó significam, esconda rótulos, troque o layout.",
+    "tour.lang.t": "Idioma",
+    "tour.lang.d": "Inglês por padrão; português a um clique. Sua escolha fica guardada.",
+
     "app.title": "Grafo de Digivoluções — Digimon Story: Time Stranger",
     "app.brand": "Digivolução",
     "app.subtitle": "Digimon Story: Time Stranger · {count}",
@@ -2229,6 +2422,7 @@ function rerenderAll() {
   if (document.getElementById("compare")?.classList.contains("open")) renderCompare();
   const hmain = document.getElementById("hint-main");
   if (hmain) hmain.innerHTML = t("hint.canvas");
+  if (typeof renderHome === "function") renderHome();
   updateTeamBadge();
   draw();
 }
@@ -3073,6 +3267,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     computeLayout();
     fitToView(true);
     draw();
+    if (typeof initOnboarding === "function") initOnboarding();
   });
 
 
@@ -4445,6 +4640,308 @@ function cmpWire() {
       }
     };
   });
+}
+
+</script>
+<script>
+/* ============================================================
+   ONBOARDING — página inicial + tutorial guiado (spotlight)
+   ============================================================ */
+
+const HOME_FEATURES = [
+  { k: "map", icon: "◈" },
+  { k: "profile", icon: "◉" },
+  { k: "power", icon: "▲" },
+  { k: "team", icon: "✚" },
+  { k: "routes", icon: "⇢" },
+  { k: "compare", icon: "⇄" },
+];
+
+function homeSeen() {
+  try { return localStorage.getItem("dvz.home") === "1"; } catch (e) { return true; }
+}
+function markHomeSeen() {
+  try { localStorage.setItem("dvz.home", "1"); } catch (e) {}
+}
+
+function renderHome() {
+  const feats = document.getElementById("home-feats");
+  if (!feats) return;
+  feats.innerHTML = HOME_FEATURES.map(f => `
+    <div class="hf">
+      <span class="hf-ic">${f.icon}</span>
+      <div>
+        <b>${t("home." + f.k + ".t")}</b>
+        <p>${t("home." + f.k + ".d")}</p>
+      </div>
+    </div>`).join("");
+  const stats = document.getElementById("home-stats");
+  if (stats) {
+    const skills = DATA.nodes.reduce((s, n) => s + (n.special || []).length + (n.skills || []).length, 0);
+    const edges = DATA.edges.length;
+    stats.innerHTML = [
+      [DATA.nodes.length, t("home.statNodes")],
+      [edges.toLocaleString(LANG === "pt" ? "pt-BR" : "en-US"), t("home.statEdges")],
+      [skills.toLocaleString(LANG === "pt" ? "pt-BR" : "en-US"), t("home.statSkills")],
+      [11, t("home.statElems")],
+    ].map(([v, l]) => `<div class="hs"><b>${v}</b><span>${l}</span></div>`).join("");
+  }
+}
+
+function openHome() {
+  renderHome();
+  const h = document.getElementById("home");
+  if (!h) return;
+  h.classList.add("open");
+  document.body.classList.add("home-open");
+}
+function closeHome() {
+  const h = document.getElementById("home");
+  if (h) h.classList.remove("open");
+  document.body.classList.remove("home-open");
+}
+
+/* ---------------- tutorial guiado ---------------- */
+
+let tourIdx = 0;
+let tourSteps = [];
+
+function tourDefs() {
+  return [
+    {
+      sel: "#search",
+      place: "bottom",
+      t: "tour.search.t", d: "tour.search.d",
+      before: () => { if (typeof closeHome === "function") closeHome(); if (typeof closeDetail === "function") closeDetail(); },
+    },
+    {
+      sel: "#f-attrs",
+      place: "right",
+      t: "tour.filters.t", d: "tour.filters.d",
+      before: () => {
+        document.body.classList.add("filters-open");
+      },
+    },
+    {
+      sel: "#stage canvas",
+      place: "center",
+      t: "tour.graph.t", d: "tour.graph.d",
+      before: () => { document.body.classList.remove("filters-open"); },
+    },
+    {
+      sel: "#detail .d-name-row",
+      place: "left",
+      t: "tour.profile.t", d: "tour.profile.d",
+      before: () => { openNodeBySlug("greymon"); },
+    },
+    {
+      sel: "#detail .d-strength2",
+      place: "left",
+      t: "tour.power.t", d: "tour.power.d",
+      before: () => { if (!state.selected) openNodeBySlug("greymon"); },
+    },
+    {
+      sel: "#toggle-compare",
+      place: "bottom",
+      t: "tour.compare.t", d: "tour.compare.d",
+      before: () => { if (typeof closeDetail === "function") closeDetail(); },
+    },
+    {
+      sel: "#toggle-team",
+      place: "bottom",
+      t: "tour.team.t", d: "tour.team.d",
+      before: () => {},
+    },
+    {
+      sel: "#toggle-routes",
+      place: "bottom",
+      t: "tour.routes.t", d: "tour.routes.d",
+      before: () => {},
+    },
+    {
+      sel: "#viewbtn",
+      place: "bottom",
+      t: "tour.view.t", d: "tour.view.d",
+      before: () => {},
+    },
+    {
+      sel: "#lang",
+      place: "bottom",
+      t: "tour.lang.t", d: "tour.lang.d",
+      before: () => {},
+    },
+  ];
+}
+
+function startTour() {
+  tourSteps = tourDefs();
+  tourIdx = 0;
+  closeHome();
+  document.body.classList.add("tour-on");
+  const layer = document.getElementById("tour");
+  if (layer) layer.classList.add("on");
+  showTourStep();
+  window.addEventListener("keydown", tourKeys, true);
+}
+
+function endTour(done) {
+  document.body.classList.remove("tour-on");
+  const layer = document.getElementById("tour");
+  if (layer) layer.classList.remove("on");
+  window.removeEventListener("keydown", tourKeys, true);
+  try { localStorage.setItem("dvz.tour", done ? "1" : "0"); } catch (e) {}
+  if (done) {
+    if (typeof closeDetail === "function") closeDetail();
+    document.body.classList.remove("filters-open");
+    toast(t("tour.finished"));
+  }
+}
+
+function tourKeys(ev) {
+  if (ev.key === "Escape") { ev.preventDefault(); endTour(false); }
+  else if (ev.key === "ArrowRight" || ev.key === "Enter") { ev.preventDefault(); tourNext(); }
+  else if (ev.key === "ArrowLeft") { ev.preventDefault(); tourPrev(); }
+}
+
+function tourNext() {
+  if (tourIdx >= tourSteps.length - 1) { endTour(true); return; }
+  tourIdx++;
+  showTourStep();
+}
+function tourPrev() {
+  if (tourIdx <= 0) return;
+  tourIdx--;
+  showTourStep();
+}
+
+function showTourStep() {
+  const step = tourSteps[tourIdx];
+  if (!step) return;
+  if (typeof step.before === "function") step.before();
+
+  // espera o layout do passo (painel abrindo/fechando) antes de medir
+  requestAnimationFrame(() => setTimeout(() => {
+    const target = document.querySelector(step.sel);
+    paintTour(step, target);
+  }, 60));
+}
+
+function paintTour(step, target) {
+  const hole = document.getElementById("tour-hole");
+  const card = document.getElementById("tour-card");
+  if (!hole || !card) return;
+
+  let r = null;
+  if (target) {
+    if (target.scrollIntoView) {
+      const tr = target.getBoundingClientRect();
+      if (tr.top < 60 || tr.bottom > window.innerHeight - 60) {
+        target.scrollIntoView({ block: "center", behavior: "instant" });
+      }
+    }
+    r = target.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) r = null;
+  }
+
+  card.innerHTML = `
+    <div class="tc-head">
+      <span class="tc-step">${t("tour.step", { n: tourIdx + 1, total: tourSteps.length })}</span>
+      <button class="tc-x" id="tour-skip" title="${t("tour.skip")}">×</button>
+    </div>
+    <h3>${t(step.t)}</h3>
+    <p>${t(step.d)}</p>
+    <div class="tc-foot">
+      <div class="tc-dots">${tourSteps.map((_, i) => `<i class="${i === tourIdx ? "on" : ""}"></i>`).join("")}</div>
+      <div class="tc-btns">
+        <button class="btn ghost" id="tour-prev"${tourIdx === 0 ? " disabled" : ""}>${t("tour.back")}</button>
+        <button class="btn primary" id="tour-next">${tourIdx >= tourSteps.length - 1 ? t("tour.done") : t("tour.next")}</button>
+      </div>
+    </div>`;
+
+  card.querySelector("#tour-next").onclick = () => tourNext();
+  card.querySelector("#tour-prev").onclick = () => tourPrev();
+  card.querySelector("#tour-skip").onclick = () => endTour(false);
+
+  const PAD = 6;
+  // alvo quase do tamanho da tela: sem recorte e sem escurecer (o cartão explica)
+  const tooBig = r && (r.width * r.height) > (window.innerWidth * window.innerHeight * 0.55);
+  if (tooBig) r = null;
+  if (r) {
+    const x = Math.max(0, r.left - PAD), y = Math.max(0, r.top - PAD);
+    const w = Math.min(window.innerWidth, r.width + PAD * 2), h = Math.min(window.innerHeight, r.height + PAD * 2);
+    hole.style.display = "block";
+    hole.style.left = x + "px";
+    hole.style.top = y + "px";
+    hole.style.width = w + "px";
+    hole.style.height = h + "px";
+    hole.style.borderRadius = (r.height > 80 ? 14 : 10) + "px";
+  } else {
+    hole.style.display = "none";
+  }
+
+  // posiciona o cartão
+  card.style.visibility = "hidden";
+  card.style.left = "0px";
+  card.style.top = "0px";
+  card.style.width = Math.min(360, window.innerWidth - 24) + "px";
+  const cw = card.offsetWidth, ch = card.offsetHeight;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const M = 12;
+
+  let left, top;
+  if (!r || step.place === "center") {
+    left = (vw - cw) / 2;
+    top = (vh - ch) / 2;
+  } else {
+    const spaceBelow = vh - (r.bottom + M);
+    const spaceAbove = r.top - M;
+    const spaceRight = vw - (r.right + M);
+    const spaceLeft = r.left - M;
+
+    if (step.place === "right" && spaceRight >= cw) {
+      left = r.right + M; top = r.top + r.height / 2 - ch / 2;
+    } else if (step.place === "left" && spaceLeft >= cw) {
+      left = r.left - cw - M; top = r.top + r.height / 2 - ch / 2;
+    } else if (step.place === "bottom" && spaceBelow >= ch) {
+      left = r.left + r.width / 2 - cw / 2; top = r.bottom + M;
+    } else if (spaceBelow >= ch) {
+      left = Math.min(vw - cw - M, Math.max(M, r.left + r.width / 2 - cw / 2)); top = r.bottom + M;
+    } else if (spaceAbove >= ch) {
+      left = Math.min(vw - cw - M, Math.max(M, r.left + r.width / 2 - cw / 2)); top = r.top - ch - M;
+    } else {
+      left = (vw - cw) / 2; top = (vh - ch) / 2;
+    }
+  }
+  left = Math.min(vw - cw - M, Math.max(M, left));
+  top = Math.min(vh - ch - M, Math.max(M, top));
+  card.style.left = left + "px";
+  card.style.top = top + "px";
+  card.style.visibility = "visible";
+}
+
+function initOnboarding() {
+  const start = document.getElementById("home-start");
+  if (start) start.onclick = () => { markHomeSeen(); closeHome(); };
+  const tourBtn = document.getElementById("home-tour");
+  if (tourBtn) tourBtn.onclick = () => { markHomeSeen(); startTour(); };
+  const skip = document.getElementById("home-skip");
+  if (skip) skip.onclick = () => { markHomeSeen(); closeHome(); };
+  const again = document.getElementById("replay-tour");
+  if (again) again.onclick = () => {
+    const menu = document.getElementById("viewmenu");
+    if (menu) menu.classList.remove("open");
+    startTour();
+  };
+  const homeBtn = document.getElementById("home-btn");
+  if (homeBtn) homeBtn.onclick = () => openHome();
+
+  window.addEventListener("resize", () => {
+    if (document.getElementById("tour")?.classList.contains("on")) {
+      paintTour(tourSteps[tourIdx], document.querySelector(tourSteps[tourIdx].sel));
+    }
+  });
+
+  if (!homeSeen()) openHome();
 }
 
 </script>
