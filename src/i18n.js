@@ -712,11 +712,20 @@ const LANGS = [
 
 let LANG = "en";
 
+const MISSING_KEYS = new Set();
 function t(key, vars) {
   const dict = LOCALES[LANG] || LOCALES.en;
   let s = dict[key];
   if (s == null) s = LOCALES.en[key];
-  if (s == null) return key;
+  if (s == null) {
+    // nunca vazar "dominio.chave" para a tela: avisa no console e mostra a última parte
+    if (!MISSING_KEYS.has(key)) {
+      MISSING_KEYS.add(key);
+      console.warn("[i18n] missing key:", key);
+    }
+    const tail = String(key).split(".").pop().replace(/([a-z])([A-Z])/g, "$1 $2");
+    return tail.charAt(0).toUpperCase() + tail.slice(1);
+  }
   if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] == null ? "" : String(vars[k])));
   return s;
 }

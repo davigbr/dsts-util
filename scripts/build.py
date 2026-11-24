@@ -172,6 +172,28 @@ tpl = open(os.path.join(ROOT, "src", "index.template.html"), encoding="utf-8").r
 eng = open(os.path.join(ROOT, "src", "engine.js"), encoding="utf-8").read()
 ren = open(os.path.join(ROOT, "src", "render.js"), encoding="utf-8").read()
 team = open(os.path.join(ROOT, "src", "team.js"), encoding="utf-8").read()
+def check_i18n():
+    """Chave usada e inexistente no dicionário aparece crua na interface: avisa no build."""
+    import re
+    files = ("render.js", "engine.js", "routes.js", "team.js", "compare.js",
+             "onboarding.js", "index.template.html")
+    used = set()
+    for name in files:
+        c = open(os.path.join(ROOT, "src", name), encoding="utf-8").read()
+        used |= set(re.findall(r'\bt\(\s*"([a-zA-Z0-9_.]+)"', c))
+        used |= set(re.findall(r'data-i18n(?:-title|-ph)?="([a-zA-Z0-9_.]+)"', c))
+    src = open(os.path.join(ROOT, "src", "i18n.js"), encoding="utf-8").read()
+    en_src, _, pt_src = src.partition("\n  pt: {")
+    en = set(re.findall(r'^    "([a-zA-Z0-9_.]+)":', en_src, re.M))
+    pt = set(re.findall(r'^    "([a-zA-Z0-9_.]+)":', pt_src, re.M))
+    used = {k for k in used if not k.endswith(".")}  # "home." vem de concatenação dinâmica
+    missing = sorted(k for k in used if k not in en or k not in pt)
+    if missing:
+        print("i18n: FALTANDO ->", ", ".join(missing))
+    else:
+        print(f"i18n: {len(used)} chaves, en e pt completos")
+
+
 routes = open(os.path.join(ROOT, "src", "routes.js"), encoding="utf-8").read()
 cmp = open(os.path.join(ROOT, "src", "compare.js"), encoding="utf-8").read()
 i18n = open(os.path.join(ROOT, "src", "i18n.js"), encoding="utf-8").read()
@@ -191,6 +213,7 @@ open(dst, "w", encoding="utf-8").write(out)
 
 print(f"nós: {len(nodes)}  arestas: {len(edge_list)}  sem ficha: {len(missing)}")
 print("sem aresta:", len(payload["meta"]["no_edges"]), payload["meta"]["no_edges"][:8])
+check_i18n()
 sem_stats = [n["name"] for n in nodes if len(n["stats"]) < 7]
 print("sem stats:", len(sem_stats), sem_stats[:6])
 print(f"arquivo: {dst}  ({os.path.getsize(dst)/1024/1024:.2f} MB)")
