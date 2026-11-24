@@ -123,3 +123,7 @@ scripts/build.py          # junta tudo (inclui as artes em base64) em dist/index
 ```
 
 Dados brutos em `data/` (`catalog.json` = catálogo dos 475, `digimon_md.json` = fichas parseadas), páginas cruas em `pages_md/`.
+
+## Repositório
+
+`github.com/davigbr/dsts-util` — `python3 scripts/build.py` gera `dist/index.html`. `pages/` e `pages_md/` (HTML bruto do Game8, ~85 MB) ficam fora do git; tudo o mais é versionado, inclusive `data/`, `img/` e o `dist/`.
