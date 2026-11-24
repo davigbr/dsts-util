@@ -393,6 +393,44 @@ function computeLineage(n) {
 /* ============================================================
    PAINEL DE DETALHE
    ============================================================ */
+function gScopeTier(by) { return by === "tier" || by === "gtier"; }
+
+/* seletor de idioma no cabeçalho */
+function initLangPicker() {
+  const sel = document.getElementById("lang");
+  if (!sel) return;
+  sel.innerHTML = "";
+  LANGS.forEach(l => {
+    const o = document.createElement("option");
+    o.value = l.id;
+    o.textContent = l.label;
+    sel.appendChild(o);
+  });
+  sel.value = LANG;
+  sel.onchange = () => setLang(sel.value);
+}
+
+/* redesenha tudo que está na tela depois de trocar o idioma */
+function rerenderAll() {
+  buildFilters();
+  syncFilterUI();
+  renderLegend();
+  const ls3 = document.getElementById("list-sort");
+  if (ls3) ls3.value = state.view.listSort || "name";
+  applyFilters();
+  buildList();
+  if (state.selected && document.getElementById("detail").classList.contains("open")) {
+    showDetail(state.selected, { nav: true });
+  }
+  if (document.getElementById("team")?.classList.contains("open") && typeof renderTeam === "function") renderTeam();
+  if (document.getElementById("routes")?.classList.contains("open")) { rtDirty = true; renderRouteTabs(); renderRoutes(); }
+  if (document.getElementById("compare")?.classList.contains("open")) renderCompare();
+  const hmain = document.getElementById("hint-main");
+  if (hmain) hmain.innerHTML = t("hint.canvas");
+  updateTeamBadge();
+  draw();
+}
+
 function showDetail(n, opts = {}) {
   if (typeof closeTeam === "function" && document.getElementById("team")?.classList.contains("open")) {
     closeTeam();
@@ -436,9 +474,9 @@ function showDetail(n, opts = {}) {
   a.style.color = ATTR_COLOR[n.attr];
   a.onclick = () => { state.filters.attrs = new Set([n.attr]); syncFilterUI(); applyFilters(); };
   chips.appendChild(a);
-  chips.appendChild(el("span", "chip", `Personalidade: ${n.pers || "—"}`));
+  chips.appendChild(el("span", "chip", t("detail.pers", { value: n.pers || "—" })));
   const rk = /none/i.test(n.rank) ? "—" : String(n.rank).replace(/^(\d+) or higher$/i, "$1+").replace(/ or higher/i, "+");
-  chips.appendChild(el("span", "chip", `Rank ${rk}`));
+  chips.appendChild(el("span", "chip", t("detail.rank", { value: rk })));
   (n.traits || []).forEach(t => chips.appendChild(el("span", "chip soft", t)));
   head.appendChild(chips);
   // força calculada — duas escalas lado a lado
@@ -457,11 +495,11 @@ function showDetail(n, opts = {}) {
       main.appendChild(b);
       const info = el("div", "ds2-info");
       info.appendChild(el("span", "ds2-rank", `#${rk}`));
-      info.appendChild(el("span", "ds2-tot", `de ${total}`));
+      info.appendChild(el("span", "ds2-tot", t("detail.ofTotal", { total })));
       main.appendChild(info);
       c.appendChild(main);
       const bars = el("div", "ds2-bars");
-      [["P", pow, "linear-gradient(90deg,#4a90e2,#8f6bff)"], ["U", ut, "linear-gradient(90deg,#f2b544,#ff7a45)"]]
+      [[t("detail.powerP"), pow, "linear-gradient(90deg,#4a90e2,#8f6bff)"], [t("detail.powerU"), ut, "linear-gradient(90deg,#f2b544,#ff7a45)"]]
         .forEach(([lab, v, bg]) => {
           const row = el("div", "ds2-row");
           row.appendChild(el("span", "ds2-lab", lab));
@@ -478,10 +516,10 @@ function showDetail(n, opts = {}) {
       return c;
     };
     const grid = el("div", "d-strength2");
-    grid.appendChild(card(`na geração · ${gc}`, n.gtier || n.tier, n.grk || 1, n.gcount || 1,
-      n.gpow ?? n.pow, n.gut ?? n.ut, "Poder relativo: compara só com Digimon da mesma geração"));
-    grid.appendChild(card("absoluto · os 475", n.tier, n.rk, DATA.nodes.length,
-      n.pow, n.ut, "Poder absoluto: compara com o roster inteiro, de Bebê a Mega+"));
+    grid.appendChild(card(t("detail.powerGen", { gen: genName }), n.gtier || n.tier, n.grk || 1, n.gcount || 1,
+      n.gpow ?? n.pow, n.gut ?? n.ut, t("detail.powerGenTip")));
+    grid.appendChild(card(t("detail.powerAbs", { total: DATA.nodes.length }), n.tier, n.rk, DATA.nodes.length,
+      n.pow, n.ut, t("detail.powerAbsTip")));
     head.appendChild(grid);
   }
   if (n.desc) head.appendChild(el("p", "d-desc", n.desc));
@@ -494,18 +532,18 @@ function showDetail(n, opts = {}) {
   }, 260);
 
   const close = el("button", "d-close", "×");
-  close.title = "Fechar (Esc)";
+  close.title = t("detail.close");
   close.onclick = () => closeDetail();
 
   const hist = state.history || [];
   const fut = state.future || [];
   const back = el("button", "d-close d-back", "←");
-  back.title = hist.length ? `Voltar para ${hist[hist.length - 1]} (Alt+←)` : "Sem histórico ainda";
+  back.title = hist.length ? t("detail.backTo", { name: hist[hist.length - 1] }) : t("detail.noHistory");
   back.disabled = !hist.length;
   back.onclick = () => goBackDetail();
 
   const fwd = el("button", "d-close d-forward", "→");
-  fwd.title = fut.length ? `Avançar para ${fut[fut.length - 1]} (Alt+→)` : "Nada à frente";
+  fwd.title = fut.length ? t("detail.fwdTo", { name: fut[fut.length - 1] }) : t("detail.noForward");
   fwd.disabled = !fut.length;
   fwd.onclick = () => goForwardDetail();
 
@@ -515,9 +553,9 @@ function showDetail(n, opts = {}) {
 
   // stats
   const sec = el("section", "d-sec");
-  sec.appendChild(el("h3", null, "Stats (Lv.99)"));
+  sec.appendChild(el("h3", null, t("detail.stats")));
   if (!n.stats || !Object.keys(n.stats).length) {
-    sec.appendChild(el("p", "muted", "Ficha ainda não carregada — sem stats."));
+    sec.appendChild(el("p", "muted", t("detail.noSheet")));
   }
   const bars = el("div", "bars");
   STATS.forEach(s => {
@@ -540,8 +578,8 @@ function showDetail(n, opts = {}) {
 
   // resistências
   const resSec = el("section", "d-sec");
-  resSec.appendChild(el("h3", null, "Fraquezas e resistências"));
-  resSec.appendChild(el("p", "res-legend", "Multiplicador de dano recebido · barra colorida = elemento"));
+  resSec.appendChild(el("h3", null, t("detail.weaknesses")));
+  resSec.appendChild(el("p", "res-legend", t("detail.resLegend")));
   const weakEls = ELEMENTS.filter(e => (n.resE || {})[e] > 1);
   const strongEls = ELEMENTS.filter(e => (n.resE || {})[e] < 1 && (n.resE || {})[e] > 0);
   const nullEls = ELEMENTS.filter(e => (n.resE || {})[e] === 0);
@@ -561,10 +599,10 @@ function showDetail(n, opts = {}) {
     row.appendChild(box);
     return row;
   };
-  resSec.appendChild(line("Fraco (×1,5)", weakEls, "w", e => EL_COLOR[e]));
-  if (nullEls.length) resSec.appendChild(line("Imune (×0)", nullEls, "n", e => EL_COLOR[e]));
-  resSec.appendChild(line("Resiste (×0,5)", strongEls, "s", e => EL_COLOR[e]));
-  resSec.appendChild(line("Atributo", [...weakAttrs.map(a => a + " ×1,5"), ...strongAttrs.map(a => a + " ×0,5")], weakAttrs.length ? "w" : "s"));
+  resSec.appendChild(line(t("detail.weak"), weakEls, "w", e => EL_COLOR[e]));
+  if (nullEls.length) resSec.appendChild(line(t("detail.immune"), nullEls, "n", e => EL_COLOR[e]));
+  resSec.appendChild(line(t("detail.resists"), strongEls, "s", e => EL_COLOR[e]));
+  resSec.appendChild(line(t("detail.attrRes"), [...weakAttrs.map(a => a + " ×1,5"), ...strongAttrs.map(a => a + " ×0,5")], weakAttrs.length ? "w" : "s"));
 
   // matriz dos 11 elementos
   const grid = el("div", "el-grid");
@@ -585,49 +623,46 @@ function showDetail(n, opts = {}) {
 
   // evoluções
   const evoSec = el("section", "d-sec");
-  evoSec.appendChild(el("h3", null, `Digivolve para (${n.out.length})`));
-  if (!n.out.length) evoSec.appendChild(el("p", "muted", "Não digivolve mais."));
+  evoSec.appendChild(el("h3", null, t("detail.evolvesToN", { n: n.out.length })));
+  if (!n.out.length) evoSec.appendChild(el("p", "muted", t("detail.noEvolutions")));
   n.out.slice().sort(evoSort).forEach(e => evoSec.appendChild(evoRow(e)));
   p.appendChild(evoSec);
 
   const preSec = el("section", "d-sec");
-  preSec.appendChild(el("h3", null, `Vem de (${n.inc.length})`));
-  if (!n.inc.length) preSec.appendChild(el("p", "muted", "Não vem de nenhum outro."));
+  preSec.appendChild(el("h3", null, t("detail.comesFromN", { n: n.inc.length })));
+  if (!n.inc.length) preSec.appendChild(el("p", "muted", t("detail.noPre")));
   n.inc.slice().sort(evoSort).forEach(e => preSec.appendChild(evoRow(e, true)));
   p.appendChild(preSec);
 
   // skills
   const sk = el("section", "d-sec");
-  sk.appendChild(el("h3", null, "Skills especiais"));
+  sk.appendChild(el("h3", null, t("detail.specials")));
   (n.special || []).forEach(s => sk.appendChild(skillRow(s)));
-  const sk2 = el("h3", null, "Skills aprendíveis");
+  const sk2 = el("h3", null, t("detail.learnable"));
   sk.appendChild(sk2);
   (n.skills || []).forEach(s => sk.appendChild(skillRow(s)));
-  if (!(n.skills || []).length && !(n.special || []).length) sk.appendChild(el("p", "muted", "Sem skills registradas."));
+  if (!(n.skills || []).length && !(n.special || []).length) sk.appendChild(el("p", "muted", t("detail.noSkills")));
   p.appendChild(sk);
 
   // ações
   const acts = el("div", "d-actions");
-  const bcmp = el("button", "btn", "⇄ Comparar");
+  const bcmp = el("button", "btn", t("detail.compare"));
   bcmp.onclick = () => openCompare(n.name, null);
   acts.appendChild(bcmp);
   const bt = el("button", "btn" + (state.team.includes(n.name) ? " on" : ""),
-    state.team.includes(n.name) ? "✓ No time" : "＋ Time");
+    state.team.includes(n.name) ? t("detail.inTeam") : t("detail.addTeam"));
   bt.onclick = () => { toggleTeam(n.name); };
   acts.appendChild(bt);
-  const b1 = el("button", "btn", "Centralizar");
+  const b1 = el("button", "btn", t("detail.center"));
   b1.onclick = () => { if (state.view.layout !== "lineage") { centerOn(n.name); } else { centerOn(n.name); } };
   acts.appendChild(b1);
-  const b2 = el("button", "btn", "Isolar linhagem");
+  const b2 = el("button", "btn", t("detail.isolate"));
   b2.onclick = () => {
     state.view.layout = "lineage";
     $("#view-layout").value = "lineage";
     computeLayout(); fitToView(); draw();
   };
   acts.appendChild(b2);
-  const b3 = el("a", "btn ghost", "Ver no Game8 ↗");
-  b3.href = n.url; b3.target = "_blank"; b3.rel = "noopener";
-  acts.appendChild(b3);
   p.appendChild(acts);
 
   history.replaceState(null, "", `#/d/${n.slug}`);
@@ -744,8 +779,8 @@ function buildList() {
     const tb = el("span", "list-tier", shownTier || "");
     tb.style.color = TIER_COLOR[shownTier] || "var(--muted)";
     tb.title = scopeGen
-      ? `Tier ${shownTier} entre ${n.gcount} ${GEN_LABEL[n.gen] || n.gen} (#${n.grk}) · no roster: ${n.tier} #${n.rk}`
-      : `Tier ${n.tier} no roster (#${n.rk}) · na geração: ${n.gtier} #${n.grk}`;
+      ? t("list.tierTipGen", { tier: shownTier, count: n.gcount, gen: GEN_LABEL[n.gen] || n.gen, rk: n.grk, rtier: n.tier, rrk: n.rk })
+      : t("list.tierTipRoster", { tier: n.tier, rk: n.rk, gtier: n.gtier, grk: n.grk });
     b.appendChild(tb);
     b.onclick = () => { openNodeBySlug(n.slug); centerOn(n.name, Math.max(state.cam.k, 0.9)); };
     b.onmouseenter = () => { state.hover = n.name; schedule(); };
@@ -774,7 +809,7 @@ function buildList() {
     else arr.sort((a, b) => (TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier)) || ((a.rk || 999) - (b.rk || 999)));
     arr.forEach(n => wrap.appendChild(row(n)));
   }
-  if (!items.length) wrap.appendChild(el("p", "muted pad", "Nenhum Digimon com esses filtros."));
+  if (!items.length) wrap.appendChild(el("p", "muted pad", t("filters.emptyT") + "."));
 }
 
 /* ============================================================
@@ -813,7 +848,7 @@ function renderSuggest(q) {
     .slice(0, 8);
   box.innerHTML = "";
   if (!items.length) {
-    box.appendChild(el("div", "sg-empty", "Nenhum Digimon com esse nome"));
+    box.appendChild(el("div", "sg-empty", t("search.noName")));
   } else {
     items.forEach(n => {
       const b = el("button", "sg-item");
@@ -881,7 +916,7 @@ function buildFilters() {
 
   const rank = $("#f-rank");
   RANKS.forEach(r => {
-    const o = el("option", null, /none/i.test(r) ? "Sem exigência" : r.replace(" or higher", "+"));
+    const o = el("option", null, /none/i.test(r) ? t("detail.notRequired") : r.replace(" or higher", "+"));
     o.value = rankNum(r);
     rank.appendChild(o);
   });
@@ -983,7 +1018,7 @@ function renderLegend() {
   if (by === "attr") {
     ATTRS.forEach(a => {
       const i = el("button", "leg");
-      i.title = `filtrar só ${a}`;
+      i.title = t("chip.filterAttr", { attr: a });
       const d = el("span", "dot");
       d.style.background = ATTR_COLOR[a];
       i.appendChild(d);
@@ -997,7 +1032,7 @@ function renderLegend() {
     });
   } else if (by === "tier" || by === "gtier") {
     const gScope = by === "gtier";
-    box.appendChild(el("div", "leg-cap", gScope ? "tier na geração" : "tier no roster"));
+    box.appendChild(el("div", "leg-cap", gScope ? t("view.legendTierGen") : t("view.legendTierRoster")));
     TIERS.forEach(t => {
       const i = el("button", "leg");
       i.title = `filtrar tier ${t}`;
@@ -1014,8 +1049,9 @@ function renderLegend() {
       box.appendChild(i);
     });
   } else {
-    const lab = by === "gen" ? "geração (bebê → Mega+)" : by === "pers" ? "personalidade" : by === "power" ? "força (score no roster)"
-      : by === "gpower" ? "força (score na geração, 0 → 100)" : `${by} (baixo → alto)`;
+    const lab = by === "gen" ? t("view.legendGen") : by === "pers" ? t("view.legendPers")
+      : by === "power" ? t("view.legendPower") : by === "gpower" ? t("view.legendPowerGen")
+      : gScopeTier(by) ? "" : t("view.legendRange", { by });
     box.appendChild(el("div", "leg-cap", lab));
     const grad = el("div", "leg-grad");
     box.appendChild(grad);
@@ -1061,8 +1097,8 @@ function initCanvasEvents() {
       tip.style.display = "block";
       tip.style.left = Math.min(viewW() - 210, mx + 14) + "px";
       tip.style.top = Math.min(viewH() - 110, my + 12) + "px";
-      tip.innerHTML = `${n.img ? `<img class="tip-img" src="${n.img}" alt="" style="box-shadow:0 0 0 1.5px ${ATTR_COLOR[n.attr]}">` : ""}<strong>${n.name}</strong><span>${GEN_LABEL[n.gen]} · ${n.attr} · tier ${n.gtier || n.tier} na geração</span>
-        <span class="tiprank">#${n.grk || 1} de ${n.gcount || 1} ${GEN_LABEL[n.gen] || ""}${(n.gcount || 1) > 1 ? "s" : ""} · roster #${n.rk}</span>
+      tip.innerHTML = `${n.img ? `<img class="tip-img" src="${n.img}" alt="" style="box-shadow:0 0 0 1.5px ${ATTR_COLOR[n.attr]}">` : ""}<strong>${n.name}</strong><span>${t("tip.genTier", { gen: GEN_LABEL[n.gen] || n.gen, attr: n.attr, tier: n.gtier || n.tier })}</span>
+        <span class="tiprank">${t("tip.rank", { rk: n.grk || 1, count: n.gcount || 1, gen: GEN_LABEL[n.gen] || n.gen, rrk: n.rk })}</span>
         <span class="tipstats">HP ${fmt(statVal(n, "HP"))} · DEF ${fmt(statVal(n, "DEF"))} · SPI ${fmt(statVal(n, "SPI"))}</span>`;
     } else tip.style.display = "none";
   });
@@ -1193,6 +1229,11 @@ function loadState() {
 window.addEventListener("DOMContentLoaded", async () => {
   document.documentElement.style.setProperty("--bg", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0d1017");
   loadState();
+  initLang();
+  initLangPicker();
+  applyI18n();
+  const hmain = document.getElementById("hint-main");
+  if (hmain) hmain.innerHTML = t("hint.canvas");
   initCanvas();
   initCanvasEvents();
   buildFilters();
@@ -1211,7 +1252,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const hint = document.getElementById("hint");
   if (hint && !hint.dataset.ext) {
     hint.dataset.ext = "1";
-    hint.innerHTML += ' · <span class="hint-extra">anel dourado = time · tracejado violeta = alvo das rotas</span>';
+    hint.innerHTML += ' · <span class="hint-extra">' + t("hint.extra") + '</span>';
   }
   applyFilters();
   buildList();

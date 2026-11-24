@@ -139,7 +139,6 @@ for item in CAT:
         "desc": pick(a, b, "desc", ""),
         "resA": pick(a, b, "resA", {}),
         "resE": pick(a, b, "resE", {}),
-        "url": item["url"],
         "img": IMG.get(item["url"].split("/")[-1], ""),
         "partial": not (a or b),
     }
@@ -160,7 +159,6 @@ payload = {
     "nodes": nodes,
     "edges": edge_list,
     "meta": {
-        "source": "game8.co (fichas /archives/<id>)",
         "stats": "nível 99 com Agent Skills maximizados",
         "built": "2026-11",
         "no_edges": [n["name"] for n in nodes if not any(e["s"] == n["name"] or e["t"] == n["name"] for e in edge_list)],
@@ -176,6 +174,7 @@ ren = open(os.path.join(ROOT, "src", "render.js"), encoding="utf-8").read()
 team = open(os.path.join(ROOT, "src", "team.js"), encoding="utf-8").read()
 routes = open(os.path.join(ROOT, "src", "routes.js"), encoding="utf-8").read()
 cmp = open(os.path.join(ROOT, "src", "compare.js"), encoding="utf-8").read()
+i18n = open(os.path.join(ROOT, "src", "i18n.js"), encoding="utf-8").read()
 
 out = tpl.replace('<script src="engine.js"></script>',
                   "<script>\nconst DATA = " + data_js + ";\n" + eng.split("const DATA = __DATA__;\n", 1)[-1] + "\n</script>")
@@ -183,6 +182,7 @@ out = out.replace('<script src="render.js"></script>', "<script>\n" + ren + "\n<
 out = out.replace('<script src="team.js"></script>', "<script>\n" + team + "\n</script>")
 out = out.replace('<script src="routes.js"></script>', "<script>\n" + routes + "\n</script>")
 out = out.replace('<script src="compare.js"></script>', "<script>\n" + cmp + "\n</script>")
+out = out.replace('<script src="i18n.js"></script>', "<script>\n" + i18n + "\n</script>")
 os.makedirs(os.path.join(ROOT, "dist"), exist_ok=True)
 dst = os.path.join(ROOT, "dist", "index.html")
 open(dst, "w", encoding="utf-8").write(out)

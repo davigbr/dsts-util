@@ -1,5 +1,5 @@
 /* ============================================================
-   Digimon Story: Time Stranger — Grafo de Digivoluções
+   Digimon Story: Time Stranger — digivolution graph
    Motor: layout em camadas + foco de linhagem + filtros
    ============================================================ */
 const DATA = __DATA__;
@@ -7,7 +7,7 @@ const DATA = __DATA__;
 const GEN_ORDER = ["In-Training I", "In-Training II", "Rookie", "Armor", "Champion", "Hybrid", "Ultimate", "Mega", "Mega+"];
 const LAYOUT_GEN = ["In-Training I", "In-Training II", "Rookie", "Champion", "Ultimate", "Mega", "Mega+", "Armor", "Hybrid"];
 const GEN_LABEL = {
-  "In-Training I": "Bebê I", "In-Training II": "Bebê II", "Rookie": "Rookie",
+  "In-Training I": "Baby I", "In-Training II": "Baby II", "Rookie": "Rookie",
   "Armor": "Armor", "Champion": "Champion", "Hybrid": "Hybrid",
   "Ultimate": "Ultimate", "Mega": "Mega", "Mega+": "Mega+"
 };
@@ -276,13 +276,13 @@ function renderFilterSummary() {
   const items = [];
   if (!allA) items.push({ t: [...f.attrs].join(" + "), undo: () => { f.attrs = new Set(ATTRS); } });
   if (!allG) items.push({ t: [...f.gens].map(g => GEN_LABEL[g] || g).join(" + "), undo: () => { f.gens = new Set(GEN_ORDER); } });
-  if (f.tiers && f.tiers.size) items.push({ t: "Tier " + [...f.tiers].sort().join("/") + (f.tierScope === "all" ? " (roster)" : " (geração)"), undo: () => { f.tiers = new Set(); } });
+  if (f.tiers && f.tiers.size) items.push({ t: t("filters.chipTier", { list: [...f.tiers].sort().join("/"), scope: f.tierScope === "all" ? t("filters.chipTierAll") : t("filters.chipTierGen") }), undo: () => { f.tiers = new Set(); } });
   if (f.pers && f.pers.size) items.push({ t: [...f.pers].join(" + "), undo: () => { f.pers = new Set(); } });
   if (+f.rankMin) items.push({ t: `Rank ${f.rankMin}+`, undo: () => { f.rankMin = 0; } });
   const st = Object.entries(f.stats || {}).filter(([, v]) => +v > 0);
   if (st.length) items.push({ t: st.map(([k, v]) => `${k} ≥ ${v}`).join(" · "), undo: () => { f.stats = {}; } });
   if (String(f.q || "").trim()) items.push({ t: `“${f.q}”`, undo: () => { f.q = ""; } });
-  if (f.onlyLinked) items.push({ t: "com digivolução", undo: () => { f.onlyLinked = false; } });
+  if (f.onlyLinked) items.push({ t: t("filters.chipLinked"), undo: () => { f.onlyLinked = false; } });
   box.innerHTML = "";
   items.forEach(it => {
     const b = document.createElement("button");
@@ -297,7 +297,7 @@ function renderFilterSummary() {
 
 function applyFilters() {
   state.visible = new Set(DATA.nodes.filter(passes).map(n => n.name));
-  $('#count').textContent = `${state.visible.size} de ${DATA.nodes.length}`;
+  $('#count').textContent = t("app.count", { shown: state.visible.size, total: DATA.nodes.length });
   const f = state.filters;
   const allA = !f.attrs || f.attrs.size === 0 || f.attrs.size >= ATTRS.length;
   const allG = !f.gens || f.gens.size === 0 || f.gens.size >= GEN_ORDER.length;

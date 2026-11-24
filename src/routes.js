@@ -4,40 +4,44 @@
 const ROUTE_TARGET_GENS = new Set(["Champion", "Ultimate", "Mega", "Mega+"]);
 const NEUTRAL_ATTRS = new Set(["Free", "Variable", "Unknown", "No Data"]);
 
-const ROUTE_META = [
-  {
-    id: "tri", name: "Triângulo",
-    short: "um de cada atributo (ou um neutro no lugar)",
-    long: "Procura um Vaccine, um Data e um Virus no mesmo time — ou um Free/Variable ocupando o lugar de um deles, porque neutro não entra no ciclo de fraqueza. É o algoritmo mais equilibrado: você bate 1,5× em alguém e alguém bate 1,5× em você, sem ficar refém de um único tipo de inimigo.",
-    weights: "pesos: 42% triângulo · 18% vantagem ofensiva · 13% neutro · 12% não empilhar fraqueza · 15% força média",
-  },
-  {
-    id: "wall", name: "Blindagem",
-    short: "o time que menos leva dano dobrado",
-    long: "Olha primeiro para o que te machuca: se dois membros levam ×1,5 de Ice, qualquer luta de gelo vira problema. Ele minimiza a soma das fraquezas repetidas, evita que o pior elemento atinja mais de um membro e maximiza quantos dos 11 elementos o time ao menos resiste com alguém.",
-    weights: "pesos: 40% fraqueza repetida · 22% pior elemento · 23% resistências cobertas · 15% força média",
-  },
-  {
-    id: "atk", name: "Ofensiva",
-    short: "o time que acerta mais elementos",
-    long: "Maximiza quantos dos 11 elementos os golpes do time cobrem, para não travar contra um chefe imune ao seu único elemento. Em troca costuma aceitar alvos com menos status e às vezes menos defesa.",
-    weights: "pesos: 44% elementos de ataque · 20% atributo que fura · 16% triângulo · 20% força média",
-  },
-  {
-    id: "power", name: "Poder",
-    short: "os alvos mais fortes possíveis",
-    long: "O mais direto: escolhe os alvos de maior score de força (a mesma nota 0–100 das fichas), mantendo o triângulo fechado e sem criar fraqueza nova. Bom quando você quer o time mais forte possível sem abandonar a base.",
-    weights: "pesos: 62% força média · 18% triângulo · 20% pior elemento",
-  },
-];
+function routeMeta() {
+  return [
+    {
+      id: "tri", name: t("algo.tri.name"),
+      short: t("algo.tri.short"),
+      long: t("algo.tri.long"),
+      weights: t("algo.tri.weights"),
+    },
+    {
+      id: "wall", name: t("algo.wall.name"),
+      short: t("algo.wall.short"),
+      long: t("algo.wall.long"),
+      weights: t("algo.wall.weights"),
+    },
+    {
+      id: "atk", name: t("algo.atk.name"),
+      short: t("algo.atk.short"),
+      long: t("algo.atk.long"),
+      weights: t("algo.atk.weights"),
+    },
+    {
+      id: "power", name: t("algo.power.name"),
+      short: t("algo.power.short"),
+      long: t("algo.power.long"),
+      weights: t("algo.power.weights"),
+    },
+  ];
+}
 
-const ROUTE_HELP = {
-  tri: "Quantos dos três atributos do ciclo (Vaccine → Virus → Data → Vaccine) estão no time. 3/3 = um de cada.",
-  maxStack: "O elemento que mais fura o time: quantos membros levam ×1,5 dele. 1 significa que nenhuma fraqueza é compartilhada.",
-  offEls: "Quantos dos 11 elementos os golpes do time conseguem acertar (união das skills físicas e mágicas dos três).",
-  avgSc: "Média da nota de força (0–100) dos três alvos — a mesma do painel de cada Digimon.",
-  algoScore: "Nota interna do algoritmo, de 0 a 100. Só compara rotas dentro da mesma aba: escalas diferentes não se comparam.",
-};
+function routeHelp() {
+  return {
+    tri: t("rh.tri"),
+    maxStack: t("rh.maxStack"),
+    offEls: t("rh.offEls"),
+    avgSc: t("rh.avgSc"),
+    algoScore: t("rh.algoScore"),
+  };
+}
 
 let routeResults = null;
 let routeTab = "tri";
@@ -166,7 +170,7 @@ function computeRoutes() {
 
   const res = [];
   const used = new Set();
-  for (const algo of ROUTE_META) {
+  for (const algo of routeMeta()) {
     const scored = combos
       .map(c => ({ c, s: ROUTE_ALGOS[algo.id](c.m) - penalty(c) }))
       .sort((a, b) => b.s - a.s);
@@ -474,9 +478,9 @@ function rtTip(node, p) {
   }
   const n = node.node;
   tip.innerHTML = `<b>${n.name}</b>
-    <span>${GEN_LABEL[n.gen] || n.gen} · ${n.attr} · tier ${n.tier}</span>
-    <span>#${n.rk} de 475 · força ${n.sc}</span>
-    <em>clique para detalhes · duplo clique abre a ficha</em>`;
+    <span>${t("tip.routesTier", { gen: GEN_LABEL[n.gen] || n.gen, attr: n.attr, tier: n.tier })}</span>
+    <span>${t("tip.routesRank", { rk: n.rk, total: DATA.nodes.length, sc: n.sc })}</span>
+    <em>${t("tip.routesClick")}</em>`;
   tip.style.display = "block";
   if (p) {
     const box = wrapEl.getBoundingClientRect();
@@ -517,17 +521,17 @@ function renderRouteSelection() {
       <div class="rts-id">
         <b>${n.name}</b>
         <span>${GEN_LABEL[n.gen] || n.gen} · ${n.attr}</span>
-        <span>tier ${n.gtier || n.tier} entre ${GEN_LABEL[n.gen] || n.gen}s (#${n.grk}/${n.gcount}) · roster #${n.rk}</span>
+        <span>${t("rts.tierLine", { tier: n.gtier || n.tier, gen: GEN_LABEL[n.gen] || n.gen, rk: n.grk, count: n.gcount, rrk: n.rk })}</span>
       </div>
-      <button class="rts-x" id="rts-close" title="fechar detalhe">×</button>
+      <button class="rts-x" id="rts-close" title="${t("rts.closeDetail")}">×</button>
     </div>
     <div class="rts-chips">
-      ${weak.length ? `<span class="rts-lab">fraco</span>${weak.map(e => rtChip(e, EL_COLOR[e])).join("")}` : ""}
-      ${strong.length ? `<span class="rts-lab">resiste</span>${strong.map(e => rtChip(e, EL_COLOR[e])).join("")}` : ""}
+      ${weak.length ? `<span class="rts-lab">${t("rts.weak")}</span>${weak.map(e => rtChip(e, EL_COLOR[e])).join("")}` : ""}
+      ${strong.length ? `<span class="rts-lab">${t("rts.resists")}</span>${strong.map(e => rtChip(e, EL_COLOR[e])).join("")}` : ""}
     </div>
     <div class="rts-actions">
-      <button class="btn" id="rts-open">Abrir ficha</button>
-      <button class="btn" id="rts-team">${inTeam ? "✓ No time" : "＋ Time"}</button>
+      <button class="btn" id="rts-open">${t("rt.openSheet")}</button>
+      <button class="btn" id="rts-team">${inTeam ? t("detail.inTeam") : t("detail.addTeam")}</button>
     </div>`;
   const x = document.getElementById("rts-close");
   if (x) x.onclick = () => { rt.sel = null; rtDraw(); renderRouteSelection(); };
@@ -538,6 +542,7 @@ function renderRouteSelection() {
 }
 
 function deltaHTML(m) {
+  const HELP = routeHelp();
   const base = evalRoute(teamNodes());
   const row = (lab, a, b, better, suffix, tip) => {
     const diff = Number(b) - Number(a);
@@ -548,15 +553,16 @@ function deltaHTML(m) {
   };
   return `
     <div class="rt-block">
-      <div class="rt-lab">Hoje → alvo</div>
-      ${row("triângulo", base.triCover, m.triCover, "up", "/3", ROUTE_HELP.tri)}
-      ${row("pior elemento atinge", base.maxStack, m.maxStack, "down", "", ROUTE_HELP.maxStack)}
-      ${row("elementos de ataque", base.offEls.length, m.offEls.length, "up", "/11", ROUTE_HELP.offEls)}
-      ${row("score médio", base.avgSc, m.avgSc, "up", "", ROUTE_HELP.avgSc)}
+      <div class="rt-lab">${t("rt.todayTarget")}</div>
+      ${row(t("rt.rowTri"), base.triCover, m.triCover, "up", "/3", HELP.tri)}
+      ${row(t("rt.rowStack"), base.maxStack, m.maxStack, "down", "", HELP.maxStack)}
+      ${row(t("rt.rowOff"), base.offEls.length, m.offEls.length, "up", "/11", HELP.offEls)}
+      ${row(t("rt.rowAvg"), base.avgSc, m.avgSc, "up", "", HELP.avgSc)}
     </div>`;
 }
 
 function routeMetricsHTML(m) {
+  const HELP = routeHelp();
   const res = routeResults.find(x => x.algo === routeTab);
   const weakChips = ELEMENTS.filter(e => m.stacked.includes(e))
     .map(e => `<span class="tchip bad" style="border-color:${EL_COLOR[e]}66;color:${EL_COLOR[e]}">${e} ×${m.nodes.filter(n => (n.resE || {})[e] > 1).length}</span>`).join("");
@@ -564,21 +570,21 @@ function routeMetricsHTML(m) {
   const offMissing = ELEMENTS.filter(e => !m.offEls.includes(e));
   return `
     <div class="rt-block">
-      <div class="rt-lab" data-tip="Os três alvos sugeridos: atributo e geração de cada um.">Atributos <i>?</i></div>
+      <div class="rt-lab" data-tip="${t("rt.attrsTip")}">${t("rt.attrs")} <i>?</i></div>
       <div class="rt-chips">${attrChips}</div>
-      <div class="rt-note">triângulo ${m.triCover}/3 · vantagem contra ${m.offAttr}/3 atributos${m.neutral ? ` · ${m.neutral} neutro(s)` : ""}</div>
+      <div class="rt-note">${t("rt.triNote", { tri: m.triCover, off: m.offAttr, neutral: m.neutral ? t("rt.neutralNote", { n: m.neutral }) : "" })}</div>
     </div>
     <div class="rt-block">
-      <div class="rt-lab" data-tip="Elementos em que mais de um membro leva ×1,5 de dano — o que o time não pode repetir.">O que fura o time <i>?</i></div>
-      <div class="rt-chips">${weakChips || '<span class="rt-note">nenhuma fraqueza repetida</span>'}</div>
-      <div class="rt-note">pior elemento atinge ${m.maxStack} membro(s) · resiste ${m.resistCover}/11</div>
+      <div class="rt-lab" data-tip="${t("rt.breaksTip")}">${t("rt.breaks")} <i>?</i></div>
+      <div class="rt-chips">${weakChips || `<span class="rt-note">${t("rt.noRepeated")}</span>`}</div>
+      <div class="rt-note">${t("rt.worstLine", { n: m.maxStack, cover: m.resistCover })}</div>
     </div>
     <div class="rt-block">
-      <div class="rt-lab" data-tip="${ROUTE_HELP.offEls}">Ataque elemental <i>?</i></div>
-      <div class="rt-note">${m.offEls.length}/11 cobertos${offMissing.length <= 5 ? " · faltam " + offMissing.join(", ") : ""}</div>
+      <div class="rt-lab" data-tip="${HELP.offEls}">${t("rt.attackEl")} <i>?</i></div>
+      <div class="rt-note">${t("rt.coveredLine", { n: m.offEls.length, missing: offMissing.length <= 5 ? t("rt.missingList", { list: offMissing.join(", ") }) : "" })}</div>
     </div>
     <div class="rt-block">
-      <div class="rt-lab" data-tip="Cada elo da digivolução com o requisito real do jogo (rank e stats) lido da linha evolutiva.">Passos <i>?</i></div>
+      <div class="rt-lab" data-tip="${t("rt.stepsTip")}">${t("rt.steps")} <i>?</i></div>
       <ol class="rt-steps">${m.nodes.map((n, i) => {
         const path = res.combo.picks[i].path;
         const reqs = path.slice(1).map((nm, k) => {
@@ -593,7 +599,7 @@ function routeMetricsHTML(m) {
           return `${path[k]} → ${nm}${bits.length ? " (" + bits.join(", ") + ")" : ""}`;
         });
         return `<li><b style="color:${ATTR_COLOR[n.attr]}">${n.name}</b> <span class="rt-tier" style="color:${TIER_COLOR[n.tier]}">${n.tier}</span>
-          <div class="rt-req">${reqs.length ? reqs.join("<br>") : "já está na forma final"}</div></li>`;
+          <div class="rt-req">${reqs.length ? reqs.join("<br>") : t("rt.finalForm")}</div></li>`;
       }).join("")}</ol>
     </div>`;
 }
@@ -603,7 +609,7 @@ function renderRoutes() {
   if (!wrap) return;
   const members = teamNodes();
   if (!members.length) {
-    wrap.innerHTML = `<p class="rt-empty">Adicione até 3 Digimon ao time (botão <b>＋ Time</b> na ficha) e as rotas aparecem aqui.</p>`;
+    wrap.innerHTML = `<p class="rt-empty">${t("rt.empty")}</p>`;
     rt.nodes = []; rt.world = null;
     return;
   }
@@ -620,27 +626,27 @@ function renderRoutes() {
       <div class="rt-canvas-wrap">
         <canvas id="rt-canvas"></canvas>
         <div class="rt-zoom">
-          <button id="rt-zo" title="afastar">−</button>
-          <button id="rt-zf" title="ajustar à tela">⤢</button>
-          <button id="rt-zi" title="aproximar">+</button>
+          <button id="rt-zo" title="${t("rt.zoomOut")}">−</button>
+          <button id="rt-zf" title="${t("rt.zf")}">⤢</button>
+          <button id="rt-zi" title="${t("rt.zoomIn")}">+</button>
         </div>
-        <div class="rt-canvas-hint">arraste para mover · roda do mouse para zoom · clique seleciona · duplo clique abre a ficha</div>
+        <div class="rt-canvas-hint">${t("rt.canvasHint")}</div>
       </div>
       <aside class="rt-side">
         <div id="rt-sel" class="rt-sel" style="display:none"></div>
         <div class="rt-headline">
           <span class="rt-algo">${res.name}</span>
-          <span class="rt-score-wrap"><span class="rt-score" data-tip="${ROUTE_HELP.algoScore}">${res.score}</span><span class="rt-score-cap">nota 0–100</span></span>
+          <span class="rt-score-wrap"><span class="rt-score" data-tip="${routeHelp().algoScore}">${res.score}</span><span class="rt-score-cap">${t("rt.scoreCap")}</span></span>
         </div>
         <p class="rt-desc">${res.desc}</p>
         <p class="rt-long">${res.long}</p>
-        <p class="rt-w"><b>Pesos</b> ${res.weights.replace(/^pesos:\s*/i, "")}</p>
-        ${converge ? '<p class="rt-warn">Com ' + members.length + ' membro(s) as rotas convergem — complete o time para ver caminhos diferentes por algoritmo.</p>' : ''}
+        <p class="rt-w"><b>${t("rt.weights")}</b> ${res.weights}</p>
+        ${converge ? `<p class="rt-warn">${t("rt.converge", { n: members.length })}</p>` : ''}
         ${deltaHTML(m)}
         ${routeMetricsHTML(m)}
         <div class="rt-actions">
-          <button id="rt-plan" class="btn">Marcar no grafo</button>
-          <button id="rt-close2" class="btn">Fechar</button>
+          <button id="rt-plan" class="btn">${t("rt.markGraph")}</button>
+          <button id="rt-close2" class="btn">${t("rt.close")}</button>
         </div>
       </aside>
     </div>`;
@@ -661,7 +667,7 @@ function renderRoutes() {
   if (apply) apply.onclick = () => {
     state.plan = m.nodes.map(n => n.name);
     saveState(); draw();
-    toast("Alvos marcados no grafo (anel tracejado).");
+    toast(t("rt.planToast"));
   };
   const cl = document.getElementById("rt-close2");
   if (cl) cl.onclick = () => closeRoutes();
@@ -705,7 +711,7 @@ function renderRouteTabs() {
   const box = document.getElementById("rt-tabs");
   if (!box) return;
   box.innerHTML = "";
-  ROUTE_META.forEach(a => {
+  routeMeta().forEach(a => {
     const b = el("button", "rt-tab" + (a.id === routeTab ? " on" : ""), a.name);
     b.dataset.tip = a.short;
     b.onclick = () => { routeTab = a.id; rt.sel = null; renderRouteTabs(); renderRoutes(); };
@@ -719,47 +725,45 @@ function openRouteHelp() {
   const box = document.getElementById("rt-help");
   if (!box) return;
   hideTip();
-  const now = ROUTE_META.find(a => a.id === routeTab) || ROUTE_META[0];
+  const META = routeMeta();
+  const HELP = routeHelp();
+  const now = META.find(a => a.id === routeTab) || META[0];
   box.innerHTML = `
     <div class="rth-card">
       <div class="rth-head">
-        <h2>Como ler esta tela</h2>
+        <h2>${t("rt.helpTitle")}</h2>
         <button class="d-close" id="rth-x" title="Fechar">×</button>
       </div>
       <div class="rth-body">
-        <p>Esta tela pega o time de agora e procura, em <b>todas as digivoluções possíveis de cada membro</b> (até 5 passos),
-        a combinação que fecha melhor um time equilibrado. Cada trilha do grafo é um membro: a coluna <b>hoje</b> é a forma atual,
-        a coluna <b>alvo</b> é a forma sugerida, e o trecho dourado é o último passo.</p>
+        <p>${t("rt.helpP1")}</p>
 
-        <h3>Os quatro algoritmos · você está vendo ${now.name}</h3>
-        ${ROUTE_META.map(a => `
+        <h3>${t("rt.algoHeader", { name: now.name })}</h3>
+        ${META.map(a => `
           <div class="rth-algo${a.id === routeTab ? " now" : ""}">
-            <b>${a.name}</b> ${a.id === routeTab ? '<span class="rth-badge">aba aberta</span>' : ""}
+            <b>${a.name}</b> ${a.id === routeTab ? `<span class="rth-badge">${t("rt.openTab")}</span>` : ""}
             <span class="rth-short">${a.short}</span>
             <p>${a.long}</p>
-            <em><b>Pesos:</b> ${a.weights.replace(/^pesos:\s*/i, "")}</em>
+            <em><b>${t("rt.weights")}:</b> ${a.weights}</em>
           </div>`).join("")}
-        <p class="rth-note">Todos os quatro obedecem a duas travas: nunca baixar o triângulo abaixo do que é possível e nunca
-        aumentar a fraqueza repetida em relação ao time de hoje. A nota de cada aba usa escala própria — só serve para
-        comparar rotas dentro da mesma aba.</p>
+        <p class="rth-note">${t("rt.helpLocks")}</p>
 
-        <h3>O que cada número quer dizer</h3>
+        <h3>${t("rt.helpNumbers")}</h3>
         <table class="rth-table">
-          <tr><td>triângulo</td><td>${ROUTE_HELP.tri}</td></tr>
-          <tr><td>pior elemento atinge</td><td>${ROUTE_HELP.maxStack}</td></tr>
-          <tr><td>elementos de ataque</td><td>${ROUTE_HELP.offEls}</td></tr>
-          <tr><td>score médio</td><td>${ROUTE_HELP.avgSc}</td></tr>
-          <tr><td>nota da aba</td><td>${ROUTE_HELP.algoScore}</td></tr>
-          <tr><td>tier S–D</td><td>Nota de força geral: S = top 8% do roster, D = os 22% mais fracos.</td></tr>
+          <tr><td>${t("rt.rowTri")}</td><td>${HELP.tri}</td></tr>
+          <tr><td>${t("rt.rowStack")}</td><td>${HELP.maxStack}</td></tr>
+          <tr><td>${t("rt.rowOff")}</td><td>${HELP.offEls}</td></tr>
+          <tr><td>${t("rt.rowAvg")}</td><td>${HELP.avgSc}</td></tr>
+          <tr><td>${t("rt.rowTab")}</td><td>${HELP.algoScore}</td></tr>
+          <tr><td>${t("rt.rowTier")}</td><td>${t("rt.tierRow")}</td></tr>
         </table>
 
-        <h3>Como navegar</h3>
+        <h3>${t("rt.helpNav")}</h3>
         <ul>
-          <li><b>Arraste</b> para mover o grafo; a <b>roda do mouse</b> dá zoom no ponto do cursor (botões − ⤢ + no canto).</li>
-          <li><b>Clique</b> num Digimon para selecionar — os detalhes aparecem no painel, com atalho para abrir a ficha ou colocar no time.</li>
-          <li><b>Duplo clique</b> abre a ficha completa.</li>
-          <li><b>Marcar no grafo</b> deixa anel tracejado violeta nos três alvos, no grafo principal.</li>
-          <li><b>R</b> abre e fecha esta tela · <b>Esc</b> fecha.</li>
+          <li>${t("rt.helpNav1")}</li>
+          <li>${t("rt.helpNav4")}</li>
+          <li>${t("rt.helpNav5")}</li>
+          <li>${t("rt.helpNav3")}</li>
+          <li>${t("rt.helpNav6")}</li>
         </ul>
       </div>
     </div>`;

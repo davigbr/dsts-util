@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grafo de Digivoluções — Digimon Story: Time Stranger</title>
+<title>Digivolution Graph — Digimon Story: Time Stranger</title>
 <meta name="description" content="Grafo navegável dos 475 Digimon de Digimon Story: Time Stranger: stats Lv.99, fraquezas e resistências, tiers, rotas de digivolução e construtor de time." />
 <meta name="theme-color" content="#0d1017" />
 <meta property="og:title" content="Grafo de Digivoluções — Digimon Story: Time Stranger" />
@@ -74,6 +74,11 @@
     background: rgba(255,255,255,.03); font-size: 12.5px; color: var(--fg); display: flex; align-items: center; gap: 6px;
   }
   .hbtn:hover { background: rgba(255,255,255,.08); }
+  .langwrap { display: flex; align-items: center; gap: 3px; }
+  .globe { font-size: 12px; opacity: .65; }
+  .langsel { height: 30px; padding: 0 4px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--line2); }
+  .langsel:hover { color: var(--fg); }
   .hbtn.on { border-color: var(--accent); color: var(--accent); }
 
   /* ---------- painel esquerdo ---------- */
@@ -387,8 +392,13 @@
   .rts-actions { display: flex; gap: 6px; margin-top: 9px; }
   .rts-actions .btn { font-size: 11px; padding: 5px 9px; }
   .rt-top { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  .rt-top .d-close, .cmp-top .d-close { position: static; top: auto; right: auto; flex: none; }
+  .rt-top #rt-help-btn { flex: none; }
   .rt-top h2 { margin: 0; font-size: 15px; letter-spacing: -.2px; }
-  .rt-tabs { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+  .rt-tabs { display: flex; gap: 6px; flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; overflow-x: auto;
+    scrollbar-width: none; }
+  .rt-tabs::-webkit-scrollbar { display: none; }
+  .rt-tabs .rt-tab { flex: 0 0 auto; white-space: nowrap; }
   .rt-tab { font-size: 12px; padding: 5px 11px; border-radius: 8px; color: var(--muted);
     border: 1px solid var(--line2); background: rgba(255,255,255,.03); }
   .rt-tab:hover { color: var(--fg); }
@@ -427,7 +437,7 @@
     .rt-canvas-hint { display: none; }
     .rt-canvas-wrap { height: 52%; flex: none; }
     .rt-side { width: 100%; max-width: none; border-left: 0; border-top: 1px solid var(--line); }
-    .rt-top { padding: 10px 12px; gap: 8px; }
+    .rt-top { padding: 10px 16px 10px 12px; gap: 8px; }
     .rt-top h2 { font-size: 13px; }
   }
   #toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 12px); z-index: 60;
@@ -515,8 +525,8 @@
   .d-close:hover { background: rgba(255,255,255,.08); color: #fff; }
   .d-close.d-back, .d-close.d-forward { font-size: 15px; font-weight: 700; color: #dfe6f0;
     background: rgba(255,255,255,.06); border: 1px solid var(--line2); }
-  .d-close.d-back { right: 44px; }
-  .d-close.d-forward { right: 76px; }
+  .d-close.d-back { right: 76px; }
+  .d-close.d-forward { right: 44px; }
   .d-close.d-back:hover, .d-close.d-forward:hover { background: rgba(255,255,255,.13); color: #fff; }
   .d-close.d-back:disabled, .d-close.d-forward:disabled { opacity: .28; cursor: default; background: transparent; }
   .d-close.d-back:disabled:hover, .d-close.d-forward:disabled:hover { background: transparent; color: var(--muted); }
@@ -572,6 +582,14 @@
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
 
+  @media (max-width: 720px) {
+    header { flex-wrap: nowrap; overflow: hidden; }
+    .hbtns { margin-left: 0; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; }
+    .hbtns::-webkit-scrollbar { display: none; }
+    .hbtns .hbtn { flex: 0 0 auto; }
+    .hbtns .langsel { position: sticky; right: 0; }
+    body { overflow-x: hidden; }
+  }
   @media (max-width: 620px) {
     .brand { display: none; }
     .searchwrap { max-width: none; }
@@ -627,76 +645,77 @@
 
 <header>
   <div class="brand">
-    <h1>Digivolução</h1>
-    <span>Digimon Story: Time Stranger · <span id="count">—</span></span>
+    <h1 data-i18n="app.brand">Digivolution</h1>
+    <span><span data-i18n="app.game">Digimon Story: Time Stranger</span> · <span id="count">—</span></span>
     <div id="fsum"></div>
   </div>
 
   <div class="searchwrap">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-    <input id="search" placeholder="Buscar Digimon, skill ou trait…  (/)" autocomplete="off" />
-    <div id="suggest">Digite um nome — Enter abre a ficha.</div>
+    <input id="search" data-i18n-ph="search.ph" placeholder="Search Digimon, skill or trait… (/)" autocomplete="off" />
+    <div id="suggest" data-i18n="search.suggest">Type a name — Enter opens the profile.</div>
   </div>
 
   <div class="hbtns">
-    <button class="hbtn on" id="toggle-filters">Filtros</button>
-    <button class="hbtn" id="toggle-list" title="Lista dos filtrados">Lista</button>
-    <button class="hbtn" id="toggle-compare" title="Comparar dois Digimon (C)"><span class="lbl">Comparar</span></button>
-    <button class="hbtn" id="toggle-routes" title="Rotas de evolução (R)"><span class="lbl">Rotas</span></button>
-    <button class="hbtn" id="toggle-team" title="Construtor de time (T)"><span class="lbl">Time</span><span class="badge"></span></button>
-    <button class="hbtn" id="viewbtn"><span class="lbl">Vista</span> ▾</button>
+    <button class="hbtn on" id="toggle-filters" data-i18n="nav.filters">Filters</button>
+    <button class="hbtn" id="toggle-list" data-i18n="nav.list" data-i18n-title="nav.listTip" title="Filtered Digimon as a list">List</button>
+    <button class="hbtn" id="toggle-compare" data-i18n-title="nav.compareTip" title="Compare two Digimon (C)"><span class="lbl" data-i18n="nav.compare">Compare</span></button>
+    <button class="hbtn" id="toggle-routes" data-i18n-title="nav.routesTip" title="Evolution routes (R)"><span class="lbl" data-i18n="nav.routes">Routes</span></button>
+    <button class="hbtn" id="toggle-team" data-i18n-title="nav.teamTip" title="Team builder (T)"><span class="lbl" data-i18n="nav.team">Team</span><span class="badge"></span></button>
+    <button class="hbtn" id="viewbtn"><span class="lbl" data-i18n="nav.view">View</span> ▾</button>
+    <span class="langwrap"><span class="globe" aria-hidden="true">🌐</span><select class="langsel" id="lang" data-i18n-title="nav.langTip" title="Language"></select></span>
   </div>
 </header>
 
 <aside id="left">
   <div class="tabs">
-    <button class="tab on" data-tab="filters">Filtros</button>
-    <button class="tab" data-tab="list">Lista</button>
+    <button class="tab on" data-tab="filters" data-i18n="tabs.filters">Filters</button>
+    <button class="tab" data-tab="list" data-i18n="tabs.list">List</button>
     <button class="close-drawer" id="close-drawer" title="Fechar">×</button>
   </div>
   <div class="tabpanes">
     <div class="pane on" id="pane-filters">
       <div class="fgroup">
-        <label class="ftitle">Atributo</label>
+        <label class="ftitle" data-i18n="filters.attr">Attribute</label>
         <div class="chips" id="f-attrs"></div>
       </div>
       <div class="fgroup">
-        <label class="ftitle">Geração</label>
+        <label class="ftitle" data-i18n="filters.gen">Generation</label>
         <div class="chips" id="f-gens"></div>
       </div>
       <div class="fgroup">
-        <label class="ftitle">Força (tier) <span class="scope" id="tier-scope">
-          <button data-scope="gen" class="on" title="compara só com Digimon da mesma geração">na geração</button>
-          <button data-scope="all" title="compara com os 475">roster</button>
+        <label class="ftitle"><span data-i18n="filters.tier">Strength (tier)</span> <span class="scope" id="tier-scope">
+          <button data-scope="gen" class="on" data-i18n="filters.tierGen" data-i18n-title="filters.tierGenTip" title="compare only with Digimon of the same generation">own gen</button>
+          <button data-scope="all" data-i18n="filters.tierRoster" data-i18n-title="filters.tierRosterTip" title="compare with the whole roster">roster</button>
         </span></label>
         <div class="chips" id="f-tiers"></div>
       </div>
       <details class="fgroup">
-        <summary class="ftitle">Personalidade <span style="text-transform:none;letter-spacing:0">(opcional)</span></summary>
+        <summary class="ftitle"><span data-i18n="filters.pers">Personality</span> <span style="text-transform:none;letter-spacing:0" data-i18n="filters.optional">(optional)</span></summary>
         <div class="chips" id="f-pers"></div>
       </details>
       <div class="fgroup">
-        <label class="ftitle">Rank mínimo</label>
+        <label class="ftitle" data-i18n="filters.rank">Minimum rank</label>
         <select id="f-rank"></select>
       </div>
       <details class="fgroup">
-        <summary class="ftitle">Stats mínimos (Lv.99)</summary>
+        <summary class="ftitle" data-i18n="filters.stats">Minimum stats (Lv.99)</summary>
         <div id="f-stats"></div>
       </details>
       <div class="fgroup">
-        <label class="ftitle">Texto (nome, skill, trait)</label>
-        <input type="text" id="f-q" placeholder="ex.: taunt, guard, counter" />
-        <label class="checkline"><input type="checkbox" id="f-linked" /> só Digimon com digivolução</label>
+        <label class="ftitle" data-i18n="filters.text">Text (name, skill, trait)</label>
+        <input type="text" id="f-q" placeholder="e.g. taunt, guard, counter" />
+        <label class="checkline"><input type="checkbox" id="f-linked" /> <span data-i18n="filters.chipLinked">has digivolution</span></label>
       </div>
-      <button id="clear">Limpar filtros</button>
+      <button id="clear" data-i18n="filters.clear">Clear filters</button>
     </div>
     <div class="pane" id="pane-list">
       <div class="list-bar">
         <span id="list-count"></span>
         <select id="list-sort">
-          <option value="name">A → Z</option>
-          <option value="power">Maior força</option>
-          <option value="tier">Tier</option>
+          <option value="name" data-i18n="list.sortName">A → Z</option>
+          <option value="power" data-i18n="list.sortPower">Highest strength</option>
+          <option value="tier" data-i18n="list.sortTier">Tier</option>
         </select>
       </div>
       <div id="list"></div>
@@ -708,15 +727,15 @@
   <canvas id="graph"></canvas>
   <div id="empty" hidden>
     <div class="empty-card">
-      <p class="empty-t">Nenhum Digimon com esses filtros</p>
-      <p class="empty-s">Tente afrouxar um critério — ou volte para todos.</p>
-      <button class="hbtn" id="empty-clear">Limpar filtros</button>
+      <p class="empty-t" data-i18n="filters.emptyT">No Digimon with these filters</p>
+      <p class="empty-s" data-i18n="filters.emptyS">Try loosening one criterion — or go back to everyone.</p>
+      <button class="hbtn" id="empty-clear" data-i18n="filters.clear">Clear filters</button>
     </div>
   </div>
   <div id="tip"></div>
   <div id="legend"></div>
   <div id="hint" style="position:absolute;left:14px;bottom:56px;z-index:10;font-size:11px;color:#8090a6;opacity:.8">
-    clique num Digimon · roda = zoom · arraste = mover · <b style="font-weight:600">0</b> reenquadra
+    <span id="hint-main">click a Digimon · wheel = zoom · drag = move · <b style="font-weight:600">0</b> reframes</span>
   </div>
   <div id="zoombar">
     <button class="zbtn" id="zoom-out" title="Zoom -">−</button>
@@ -729,8 +748,8 @@
 
 <div id="compare">
   <div class="cmp-top">
-    <h2>Comparar Digimon</h2>
-    <span class="cmp-top-hint">as notas de força são relativas à geração de cada um</span>
+    <h2 data-i18n="cmp.title">Compare Digimon</h2>
+    <span class="cmp-top-hint" data-i18n="cmp.hintTop">strength notes are relative to each one's generation</span>
     <button class="d-close" id="cmp-close" title="Fechar">×</button>
   </div>
   <div id="cmp-body"></div>
@@ -738,9 +757,9 @@
 
 <div id="routes">
   <div class="rt-top">
-    <h2>Rotas de evolução</h2>
+    <h2 data-i18n="rt.title">Evolution routes</h2>
     <div class="rt-tabs" id="rt-tabs"></div>
-    <button class="hbtn" id="rt-help-btn" title="Como ler esta tela">？ Como funciona</button>
+    <button class="hbtn" id="rt-help-btn" data-i18n="rt.help" data-i18n-title="rt.helpTip" title="How to read this screen">？ How it works</button>
     <button class="d-close" id="rt-close" title="Fechar">×</button>
   </div>
   <div id="rt-help"></div>
@@ -749,7 +768,7 @@
 
 <aside id="team">
   <div class="team-head">
-    <h2>Construtor de time</h2>
+    <h2 data-i18n="team.title">Team builder</h2>
     <button class="d-close" id="team-close" title="Fechar">×</button>
   </div>
   <div id="team-body"></div>
@@ -757,15 +776,15 @@
 
 <div id="viewpop">
   <div class="fgroup">
-    <label class="ftitle">Cor por</label>
+    <label class="ftitle" data-i18n="view.color">Color by</label>
     <select id="view-color">
-      <option value="attr">Atributo</option>
-      <option value="tier">Força (tier no roster)</option>
-      <option value="gtier">Força (tier na geração)</option>
-      <option value="power">Força (score no roster)</option>
-      <option value="gpower">Força (score na geração)</option>
-      <option value="gen">Geração</option>
-      <option value="pers">Personalidade</option>
+      <option value="attr" data-i18n="view.attr">Attribute</option>
+      <option value="tier" data-i18n="view.tierRoster">Strength (tier, roster)</option>
+      <option value="gtier" data-i18n="view.tierGen">Strength (tier, own gen)</option>
+      <option value="power" data-i18n="view.powerRoster">Strength (score, roster)</option>
+      <option value="gpower" data-i18n="view.powerGen">Strength (score, own gen)</option>
+      <option value="gen" data-i18n="view.gen">Generation</option>
+      <option value="pers" data-i18n="view.pers">Personality</option>
       <option value="hp">HP</option>
       <option value="atk">ATK</option>
       <option value="def">DEF</option>
@@ -775,53 +794,54 @@
     </select>
   </div>
   <div class="fgroup">
-    <label class="ftitle">Tamanho do nó</label>
+    <label class="ftitle" data-i18n="view.size">Node size</label>
     <select id="view-size">
-      <option value="fixed">Fixo</option>
-      <option value="power">Força (score no roster)</option>
-      <option value="gpower">Força (score na geração)</option>
+      <option value="fixed" data-i18n="view.fixed">Fixed</option>
+      <option value="power" data-i18n="view.powerRoster">Strength (score, roster)</option>
+      <option value="gpower" data-i18n="view.powerGen">Strength (score, own gen)</option>
       <option value="hp">HP</option>
       <option value="atk">ATK</option>
       <option value="def">DEF</option>
       <option value="spi">SPI</option>
-      <option value="bulk">Casco (HP×DEF+SPI)</option>
+      <option value="bulk" data-i18n="view.bulk">Bulk (HP×DEF+SPI)</option>
     </select>
   </div>
   <div class="fgroup">
-    <label class="ftitle">Rótulos</label>
+    <label class="ftitle" data-i18n="view.labels">Labels</label>
     <select id="view-labels">
-      <option value="auto">Automático (zoom)</option>
-      <option value="near">Só na linhagem</option>
-      <option value="all">Todos</option>
-      <option value="none">Nenhum</option>
+      <option value="auto" data-i18n="view.labelsAuto">Automatic (zoom)</option>
+      <option value="near" data-i18n="view.labelsNear">Lineage only</option>
+      <option value="all" data-i18n="view.labelsAll">All</option>
+      <option value="none" data-i18n="view.labelsNone">None</option>
     </select>
   </div>
   <div class="fgroup">
-    <label class="ftitle">Arestas</label>
-    <label class="vrow"><span>Ícones</span>
+    <label class="ftitle" data-i18n="view.edges">Edges</label>
+    <label class="vrow"><span data-i18n="view.icons">Icons</span>
       <select id="view-icons">
-        <option value="auto">Automático</option>
-        <option value="on">Sempre</option>
-        <option value="off">Desligado</option>
+        <option value="auto" data-i18n="view.iconsAuto">Automatic</option>
+        <option value="on" data-i18n="view.iconsOn">Always</option>
+        <option value="off" data-i18n="view.iconsOff">Off</option>
       </select>
     </label>
     <select id="view-edges">
-      <option value="lineage">Só ao destacar (limpo)</option>
-      <option value="all">Todas as digivoluções</option>
-      <option value="none">Ocultar</option>
+      <option value="lineage" data-i18n="view.edgesLineage">Highlighted only (clean)</option>
+      <option value="all" data-i18n="view.edgesAll">All digivolutions</option>
+      <option value="none" data-i18n="view.edgesNone">Hide</option>
     </select>
   </div>
   <div class="fgroup">
-    <label class="ftitle">Layout</label>
+    <label class="ftitle" data-i18n="view.layout">Layout</label>
     <select id="view-layout">
-      <option value="layers">Camadas por geração</option>
-      <option value="lineage">Só a linhagem do selecionado</option>
-      <option value="force">Força (explorar)</option>
+      <option value="layers" data-i18n="view.layers">Layers by generation</option>
+      <option value="lineage" data-i18n="view.lineage">Selected lineage only</option>
+      <option value="force" data-i18n="view.force">Strength (explore)</option>
     </select>
   </div>
   <label class="checkline"><input type="checkbox" id="view-focus" checked /> destacar linhagem do selecionado</label>
 </div>
 
+<script src="i18n.js"></script>
 <script src="engine.js"></script>
 <script src="render.js"></script>
 <script src="team.js"></script>

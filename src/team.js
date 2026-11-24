@@ -71,7 +71,7 @@ function teamSlot(name) {
   const row = el("div", "tslot");
   if (!name) {
     row.classList.add("empty");
-    row.appendChild(el("span", "tslot-empty", "+ vazio"));
+    row.appendChild(el("span", "tslot-empty", t("team.slotEmpty")));
     return row;
   }
   const n = byName.get(name);
@@ -108,15 +108,15 @@ function renderTeam() {
   for (let i = 0; i < TEAM_MAX; i++) slots.appendChild(teamSlot(state.team[i]));
   body.appendChild(slots);
   const hint = el("p", "tslot-hint", nodes.length < TEAM_MAX
-    ? "Adicione pela ficha do Digimon (botão “＋ Time”) ou pelo atalho T com um nó selecionado."
-    : "Time completo. Clique num slot para abrir a ficha.");
+    ? t("team.empty")
+    : t("team.teamFull"));
   body.appendChild(hint);
-  const go = el("button", "btn wide", "Ver rotas de evolução");
+  const go = el("button", "btn wide", t("team.routes"));
   go.onclick = () => openRoutes();
   body.appendChild(go);
 
   if (!nodes.length) {
-    const empty = el("p", "muted pad", "Com dois ou três Digimon o cruzamento de tipos e elementos aparece aqui.");
+    const empty = el("p", "muted pad", t("team.needTwo"));
     body.appendChild(empty);
     return;
   }
@@ -125,19 +125,19 @@ function renderTeam() {
 
   /* ---------- confronto por atributo ---------- */
   const s1 = el("section", "t-sec");
-  s1.appendChild(el("h3", null, "Triângulo de atributos"));
+  s1.appendChild(el("h3", null, t("team.triTitle")));
   const cov = ATTR3.filter(x => a.offAttr[x]).length;
-  s1.appendChild(el("p", "t-cap", `Vaccine ▸ Virus ▸ Data ▸ Vaccine (×1,5 é vantagem, ×0,5 resistência). Cada cartão é um atributo inimigo: quantos dos seus ${nodes.length} membros batem com vantagem e quantos levam ×1,5 dele. Cobertura: ${cov}/3.`));
+  s1.appendChild(el("p", "t-cap", t("team.triCap.one", { n: nodes.length, cov })));
   const grid = el("div", "tgrid");
   ATTR3.forEach(enemy => {
     const ours = a.offAttr[enemy], theirs = a.defAttr[enemy];
     const card = el("div", "tcard");
     card.style.setProperty("--c", ATTR_COLOR[enemy]);
-    card.appendChild(el("div", "tcard-h", `Inimigo ${enemy}`));
-    card.appendChild(chipEl(`nós batemos: ${ours}/${nodes.length}`, ours ? "good" : "bad",
-      ours ? `${ours} membro(s) com vantagem ×1,5 contra ${enemy}` : `nenhum membro bate ${enemy} com vantagem`));
-    card.appendChild(chipEl(`eles batem: ${theirs}/${nodes.length}`, theirs ? "bad" : "good",
-      theirs ? `${theirs} membro(s) levam ×1,5 de ${enemy}` : `ninguém do time é fraco contra ${enemy}`));
+    card.appendChild(el("div", "tcard-h", t("team.enemy", { attr: enemy })));
+    card.appendChild(chipEl(t("team.weBeat", { n: ours, total: nodes.length }), ours ? "good" : "bad",
+      ours ? t("team.beatSome", { n: ours, attr: enemy }) : t("team.beatNone", { attr: enemy })));
+    card.appendChild(chipEl(t("team.theyHit", { n: theirs, attr: enemy, total: nodes.length }), theirs ? "bad" : "good",
+      theirs ? t("team.theyHit", { n: theirs, attr: enemy }) : t("team.nobodyWeak", { attr: enemy })));
     grid.appendChild(card);
   });
   s1.appendChild(grid);
@@ -145,15 +145,15 @@ function renderTeam() {
 
   /* ---------- cobertura elemental ofensiva ---------- */
   const s2 = el("section", "t-sec");
-  s2.appendChild(el("h3", null, "Elementos que o time ataca"));
+  s2.appendChild(el("h3", null, t("team.atkTitle")));
   const missing = ELEMENTS.filter(e => !a.offEl[e]);
   const covered = ELEMENTS.filter(e => a.offEl[e]);
-  s2.appendChild(el("p", "t-cap", `Cobertos: ${covered.length} de 11.` +
-    (missing.length ? " Sem golpe de: " + missing.join(", ") + "." : " Todos cobertos.")));
+  s2.appendChild(el("p", "t-cap", t("team.atkCap", { n: covered.length }) +
+    (missing.length ? t("team.someMissing", { list: missing.join(", ") }) : t("team.allCovered"))));
   const elGrid = el("div", "tels");
   ELEMENTS.forEach(e => {
     const c = chipEl(a.offEl[e] ? `✓ ${e} ×${a.offEl[e]}` : e, a.offEl[e] ? "on" : "off",
-      a.offEl[e] ? `${a.offEl[e]} membro(s) com golpe de ${e}` : `ninguém ataca com ${e}`,
+      a.offEl[e] ? t("team.atkCount", { n: a.offEl[e], el: e }) : t("team.nobodyAttacks", { el: e }),
       EL_COLOR[e]);
     c.style.setProperty("--c", EL_COLOR[e]);
     elGrid.appendChild(c);
@@ -163,15 +163,15 @@ function renderTeam() {
 
   /* ---------- exposição defensiva ---------- */
   const s3 = el("section", "t-sec");
-  s3.appendChild(el("h3", null, "O que fura o time"));
+  s3.appendChild(el("h3", null, t("team.defTitle")));
   const stacked = ELEMENTS.filter(e => a.weakEl[e] >= 2);
   s3.appendChild(el("p", "t-cap", stacked.length
-    ? "Fraqueza repetida (dois ou mais membros): " + stacked.join(", ")
-    : "Nenhuma fraqueza elemental repetida"));
+    ? t("team.defRepeated", { list: stacked.join(", ") })
+    : t("team.defNoRepeated")));
   const elGrid2 = el("div", "tels");
   ELEMENTS.forEach(e => {
     const c = chipEl(a.weakEl[e] ? `${e} ×${a.weakEl[e]}` : e, a.weakEl[e] >= 2 ? "bad" : a.weakEl[e] ? "warn" : "off",
-      a.weakEl[e] ? `${a.weakEl[e]} membro(s) levam ×1,5 de ${e}` : `ninguém é fraco a ${e}`,
+      a.weakEl[e] ? t("team.defCount", { n: a.weakEl[e], el: e }) : t("team.defNone", { el: e }),
       EL_COLOR[e]);
     elGrid2.appendChild(c);
   });
@@ -180,8 +180,8 @@ function renderTeam() {
 
   /* ---------- resumo por membro ---------- */
   const s4 = el("section", "t-sec");
-  s4.appendChild(el("h3", null, "Por membro"));
-  s4.appendChild(el("p", "t-cap", "verde: bate ou resiste · vermelho: fraqueza · amarelo: atributo que fura"));
+  s4.appendChild(el("h3", null, t("team.perTitle")));
+  s4.appendChild(el("p", "t-cap", t("team.perLegend")));
   a.per.forEach(p => {
     const row = el("div", "tper");
     const nm = el("span", "tper-name", p.n.name);
@@ -189,11 +189,11 @@ function renderTeam() {
     nm.onclick = () => openNodeBySlug(p.n.slug);
     row.appendChild(nm);
     const box2 = el("div", "tper-chips");
-    if (p.beats) box2.appendChild(chipEl("bate " + p.beats, "good"));
+    if (p.beats) box2.appendChild(chipEl(t("team.chipBeats", { attr: p.beats }), "good"));
     p.els.forEach(e => box2.appendChild(chipEl(e, "on", null, EL_COLOR[e])));
-    p.weak.forEach(e => box2.appendChild(chipEl("fraco " + e, "bad")));
-    p.resist.forEach(e => box2.appendChild(chipEl("resiste " + e, "good")));
-    p.weakA.forEach(x => box2.appendChild(chipEl(`leva ×1,5 de ${x}`, "warn")));
+    p.weak.forEach(e => box2.appendChild(chipEl(t("team.chipWeak", { el: e }), "bad")));
+    p.resist.forEach(e => box2.appendChild(chipEl(t("team.chipResists", { el: e }), "good")));
+    p.weakA.forEach(x => box2.appendChild(chipEl(t("team.chipTakes", { attr: x }), "warn")));
     row.appendChild(box2);
     s4.appendChild(row);
   });
@@ -201,17 +201,17 @@ function renderTeam() {
 
   /* ---------- veredito ---------- */
   const s5 = el("section", "t-sec");
-  s5.appendChild(el("h3", null, "Leitura rápida"));
+  s5.appendChild(el("h3", null, t("team.quick")));
   const tips = [];
   ATTR3.forEach(enemy => {
-    if (!a.offAttr[enemy]) tips.push(`Ninguém do time tem vantagem contra ${enemy} — considere um membro ${Object.keys(BEATS).find(k => BEATS[k] === enemy)}.`);
-    if (a.defAttr[enemy] >= 2) tips.push(`${a.defAttr[enemy]} membros levam ×1,5 de ${enemy}: evite atacar em grupo contra ${enemy}.`);
+    if (!a.offAttr[enemy]) tips.push(t("team.tipNoAttr", { attr: enemy, want: Object.keys(BEATS).find(k => BEATS[k] === enemy) }));
+    if (a.defAttr[enemy] >= 2) tips.push(t("team.tipTwoWeak", { n: a.defAttr[enemy], attr: enemy }));
   });
-  if (stacked.length) tips.push(`Cuidado com ${stacked.join(" / ")}: atinge mais de um membro.`);
-  if (missing.length && missing.length <= 4) tips.push(`Elementos sem cobertura ofensiva: ${missing.join(", ")}.`);
-  if (!tips.length) tips.push("Time equilibrado nos dois eixos (atributo e elemento).");
+  if (stacked.length) tips.push(t("team.tipStack", { list: stacked.join(" / ") }));
+  if (missing.length && missing.length <= 4) tips.push(t("team.tipMissing", { list: missing.join(", ") }));
+  if (!tips.length) tips.push(t("team.balanced"));
   const ul = el("ul", "t-tips");
-  tips.slice(0, 6).forEach(t => ul.appendChild(el("li", null, t)));
+  tips.slice(0, 6).forEach(tip => ul.appendChild(el("li", null, tip)));
   s5.appendChild(ul);
   body.appendChild(s5);
 }

@@ -60,8 +60,8 @@ function cmpSlotHTML(which) {
   if (!n) {
     return `<div class="cmp-slot empty" data-side="${which}">
       <span class="cmp-badge">${label}</span>
-      <div class="cmp-empty-txt">Escolha um Digimon</div>
-      <input class="cmp-search" id="cmp-q-${which}" placeholder="buscar nome…" autocomplete="off">
+      <div class="cmp-empty-txt">${t("cmp.pick")}</div>
+      <input class="cmp-search" id="cmp-q-${which}" placeholder="${t("cmp.searchPh")}" autocomplete="off">
       <div class="cmp-sug" id="cmp-sug-${which}"></div>
     </div>`;
   }
@@ -71,12 +71,12 @@ function cmpSlotHTML(which) {
     <div class="cmp-id">
       <b>${n.name}</b>
       <span>${GEN_LABEL[n.gen] || n.gen} · ${n.attr}</span>
-      <span>tier ${n.gtier || n.tier} na geração · #${n.rk} no roster</span>
+      <span>${t("cmp.tierGen")} ${n.gtier || n.tier} · #${n.rk} ${t("cmp.tierRoster")}</span>
     </div>
     <div class="cmp-slot-btns">
-      <button class="cmp-mini" data-act="trocar" data-side="${which}" title="trocar">⇄</button>
-      <button class="cmp-mini" data-act="limpar" data-side="${which}" title="remover">×</button>
-      <button class="cmp-mini" data-act="ficha" data-side="${which}" title="abrir ficha">↗</button>
+      <button class="cmp-mini" data-act="trocar" data-side="${which}" title="${t("cmp.swap")}">⇄</button>
+      <button class="cmp-mini" data-act="limpar" data-side="${which}" title="${t("cmp.remove")}">×</button>
+      <button class="cmp-mini" data-act="ficha" data-side="${which}" title="${t("cmp.openProfile")}">↗</button>
     </div>
   </div>`;
 }
@@ -97,7 +97,7 @@ function renderCompare() {
       ${cmpSlotHTML("b")}
     </div>`;
   if (!a || !b) {
-    body.innerHTML = head + `<p class="cmp-hint">Escolha os dois Digimon acima. A comparação usa a <b>nota relativa à geração</b> — assim um Champion não é penalizado por não ter os stats de um Mega.</p>`;
+    body.innerHTML = head + `<p class="cmp-hint">${t("cmp.hint")}</p>`;
     cmpWire();
     return;
   }
@@ -111,8 +111,8 @@ function renderCompare() {
   const gA = a.grk || 1, gB = b.grk || 1;
   const sameGen = a.gen === b.gen;
   const summary = sameGen
-    ? `${a.name} é #${gA} de ${a.gcount} entre ${GEN_LABEL[a.gen]}s e ${b.name} é #${gB} — mesma geração, comparação direta.`
-    : `Gerações diferentes (${GEN_LABEL[a.gen]} × ${GEN_LABEL[b.gen]}): o tier mostrado é o <b>relativo a cada geração</b>. No roster inteiro, ${a.name} é #${a.rk} e ${b.name} é #${b.rk}.`;
+    ? t("cmp.sameGen", { a: a.name, ra: gA, total: a.gcount, gen: GEN_LABEL[a.gen], b: b.name, rb: gB })
+    : t("cmp.diffGen", { ga: GEN_LABEL[a.gen], gb: GEN_LABEL[b.gen], a: a.name, ra: a.rk, b: b.name, rb: b.rk });
 
   const statRow = k => {
     const va = cmpStat(a, k), vb = cmpStat(b, k);
@@ -150,53 +150,53 @@ function renderCompare() {
   const skillsA = [...(a.special || [])], skillsB = [...(b.special || [])];
 
   body.innerHTML = head + `
-    <p class="cmp-summary">${summary} ${winsA || winsB ? `Nos 7 stats: <b>${a.name}</b> ${winsA} · <b>${b.name}</b> ${winsB}${ties ? ` · ${ties} empate(s)` : ""}.` : ""}</p>
+    <p class="cmp-summary">${summary} ${winsA || winsB ? t("cmp.statsWin", { a: a.name, wa: winsA, b: b.name, wb: winsB, ties: ties ? t("cmp.ties", { n: ties }) : "" }) : ""}</p>
     <div class="cmp-table">
       <div class="cmp-row cmp-th">
         <div class="cmp-cell a">${a.name}</div>
-        <div class="cmp-lab">atributo</div>
+        <div class="cmp-lab">${t("filters.attr")}</div>
         <div class="cmp-cell b">${b.name}</div>
         <div class="cmp-flag"></div>
       </div>
       <div class="cmp-row">
         <div class="cmp-cell a"><span>${GEN_LABEL[a.gen] || a.gen}</span></div>
-        <div class="cmp-lab">geração</div>
+        <div class="cmp-lab">${t("cmp.gen")}</div>
         <div class="cmp-cell b"><span>${GEN_LABEL[b.gen] || b.gen}</span></div>
         <div class="cmp-flag"></div>
       </div>
       <div class="cmp-row">
         <div class="cmp-cell a"><div class="cmp-chips"><span class="tchip" style="border-color:${ATTR_COLOR[a.attr]}66;color:${ATTR_COLOR[a.attr]}">${a.attr}</span></div></div>
-        <div class="cmp-lab">tipo</div>
+        <div class="cmp-lab">${t("filters.attr")}</div>
         <div class="cmp-cell b"><div class="cmp-chips"><span class="tchip" style="border-color:${ATTR_COLOR[b.attr]}66;color:${ATTR_COLOR[b.attr]}">${b.attr}</span></div></div>
         <div class="cmp-flag"></div>
       </div>
       <div class="cmp-row">
         <div class="cmp-cell a"><span class="cmp-tier" style="color:${TIER_COLOR[a.gtier]}">${a.gtier} <em>#${a.grk}/${a.gcount}</em></span></div>
-        <div class="cmp-lab">tier na geração</div>
+        <div class="cmp-lab">${t("cmp.tierGen")}</div>
         <div class="cmp-cell b"><span class="cmp-tier" style="color:${TIER_COLOR[b.gtier]}">${b.gtier} <em>#${b.grk}/${b.gcount}</em></span></div>
         <div class="cmp-flag ${(a.grk || 999) < (b.grk || 999) ? "up" : (a.grk || 999) > (b.grk || 999) ? "down" : ""}">${(a.grk || 999) < (b.grk || 999) ? "▲" : (a.grk || 999) > (b.grk || 999) ? "▼" : "="}</div>
       </div>
       ${!sameGen ? `<div class="cmp-row">
         <div class="cmp-cell a"><span>${a.tier} <em>#${a.rk}</em></span></div>
-        <div class="cmp-lab">tier no roster</div>
+        <div class="cmp-lab">${t("cmp.tierRoster")}</div>
         <div class="cmp-cell b"><span>${b.tier} <em>#${b.rk}</em></span></div>
         <div class="cmp-flag"></div>
       </div>` : ""}
-      <div class="cmp-sep">Stats Lv.99</div>
+      <div class="cmp-sep">${t("cmp.stats")}</div>
       ${CMP_STATS.map(statRow).join("")}
-      <div class="cmp-sep">Fraquezas e resistências</div>
-      ${resRow("fraco a", { a: weakA, b: weakB }, e => EL_COLOR[e])}
-      ${resRow("resiste a", { a: strongA, b: strongB }, e => EL_COLOR[e])}
-      ${resRow("só o A é fraco", { a: onlyA, b: [] }, e => EL_COLOR[e])}
-      ${resRow("só o B é fraco", { a: [], b: onlyB }, e => EL_COLOR[e])}
-      <div class="cmp-sep">Skills assinatura</div>
+      <div class="cmp-sep">${t("cmp.res")}</div>
+      ${resRow(t("cmp.weak"), { a: weakA, b: weakB }, e => EL_COLOR[e])}
+      ${resRow(t("cmp.resists"), { a: strongA, b: strongB }, e => EL_COLOR[e])}
+      ${resRow(t("cmp.onlyA"), { a: onlyA, b: [] }, e => EL_COLOR[e])}
+      ${resRow(t("cmp.onlyB"), { a: [], b: onlyB }, e => EL_COLOR[e])}
+      <div class="cmp-sep">${t("detail.specials")}</div>
       <div class="cmp-row">
         <div class="cmp-cell a"><ul class="cmp-skills">${skillsA.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
-        <div class="cmp-lab">especiais</div>
+        <div class="cmp-lab">${t("cmp.specials")}</div>
         <div class="cmp-cell b"><ul class="cmp-skills">${skillsB.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
         <div class="cmp-flag"></div>
       </div>
-      ${shared.length ? `<p class="cmp-shared">Fraqueza em comum: ${shared.join(", ")} — trocar um pelo outro não resolve esse buraco.</p>` : ""}
+      ${shared.length ? `<p class="cmp-shared">${t("cmp.shared", { list: shared.join(", ") })}</p>` : ""}
     </div>`;
   cmpWire();
 }

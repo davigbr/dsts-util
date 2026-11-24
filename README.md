@@ -101,13 +101,13 @@ Os membros do time ganham anel dourado no grafo.
 
 Cada nó do grafo é a arte do Digimon recortada em círculo, com anel na cor do atributo. A arte também aparece no tooltip, na lista, no painel (retrato 84px) e nas linhas de digivolução. Em `Vista → Ícones` dá para fixar em "Sempre" ou desligar.
 
-As 475 imagens vêm do Game8, redimensionadas para 144 px em WebP (~1,2 MB) e embutidas como base64 — por isso o arquivo tem ~2,3 MB e continua funcionando offline.
+As 475 artes são redimensionadas para 144 px em WebP (~1,2 MB) e embutidas como base64 — por isso o arquivo tem ~2,5 MB e continua funcionando offline.
 
 ## Dados
 
 Cada ficha traz stats Lv.99, tipo, personalidade base, traits, skills (com **elemento**, SP, tipo e efeito), **fraquezas/resistências de atributo e dos 11 elementos**, a linha de digivolução com requisitos e a descrição do Field Guide.
 
-Fonte: fichas do Game8 (`/archives/<id>`), lidas via relay `r.jina.ai`. Stats são de **nível 99 com Agent Skills maximizados** — comparáveis entre si, não são stats de campanha. Arestas vindas de de-digivolução aparecem como “via de-digivolução” quando a página não traz o requisito explícito.
+Fonte: fichas públicas da comunidade do jogo, lidas via relay de markdown. Stats são de **nível 99 com Agent Skills maximizados** — comparáveis entre si, não são stats de campanha. Arestas vindas de de-digivolução aparecem como “via de-digivolução” quando a página não traz o requisito explícito.
 
 ## Pipeline
 
@@ -126,7 +126,7 @@ Dados brutos em `data/` (`catalog.json` = catálogo dos 475, `digimon_md.json` =
 
 ## Repositório
 
-`github.com/davigbr/dsts-util` — `python3 scripts/build.py` gera `dist/index.html`. `pages/` e `pages_md/` (HTML bruto do Game8, ~85 MB) ficam fora do git; tudo o mais é versionado, inclusive `data/`, `img/` e o `dist/`.
+`github.com/davigbr/dsts-util` — `python3 scripts/build.py` gera `dist/index.html`. `pages/` e `pages_md/` (HTML bruto das fichas, ~85 MB) ficam fora do git; tudo o mais é versionado, inclusive `data/`, `img/` e o `dist/`.
 
 ## Publicar no Netlify
 
@@ -138,3 +138,14 @@ Duas formas:
 2. **Drag and drop** — rode `python3 scripts/build.py` e arraste a pasta `dist` em app.netlify.com/drop.
 
 Antes de publicar: `python3 scripts/build.py` (gera `dist/index.html`) e `git push`. O `dist/robots.txt` libera indexação.
+
+## Idioma (i18n)
+
+O app está em **inglês**. Toda string de interface sai de um dicionário em `src/i18n.js` (`LOCALES.en` e `LOCALES.pt`), nunca literal no código:
+
+- `t("chave", { var })` interpola `{var}` e cai para o inglês quando a chave falta no idioma atual;
+- o HTML usa `data-i18n`, `data-i18n-title` e `data-i18n-ph` (aplicados por `applyI18n()`);
+- o seletor **🌐 EN/PT** no cabeçalho chama `setLang()`, que persiste em `localStorage` (`dvz.lang`) e dispara `rerenderAll()` — lista, ficha, time, rotas e comparação são redesenhados no idioma novo;
+- para um idioma novo, copie o bloco `en` em `LOCALES`, traduza e acrescente `{ id, label }` em `LANGS`. Nada mais muda.
+
+Os nomes de Digimon, skills, traits e descrições vêm dos dados e permanecem como estão.
