@@ -155,3 +155,11 @@ Os nomes de Digimon, skills, traits e descrições vêm dos dados e permanecem c
 Na primeira visita o app abre uma **página inicial** (`src/onboarding.js`): o que ele faz, os números do catálogo (475 Digimon, 1.114 digivoluções, 2.236 skills, 11 elementos), seis cartões de recurso e dois botões — **Open the graph** e **Take the 1-minute tour**. A escolha fica em `localStorage` (`dvz.home`); o botão **⌂** no cabeçalho reabre a página, e **Vista → Show the tour again** repete o tutorial.
 
 O tutorial é um coach-mark com recorte (spotlight) sobre o elemento real: 10 passos que vão do campo de busca ao seletor de idioma, abrindo sozinhos o painel de filtros, uma ficha e o painel de força quando o passo precisa deles. `teclado`: → / Enter avança, ← volta, Esc sai. Se o alvo ocupa quase a tela toda, o recorte é desligado e o cartão centraliza. Tudo sai do `LOCALES` (en/pt) como o resto da interface.
+
+## Skills e discos
+
+Todo Digimon tem uma **Special Skill** fixa e uma lista de **attachment skills** que destrava subindo de nível. Na mecânica do jogo essas skills viram disco e **qualquer Digimon equipa qualquer uma** nos 4 slots — a lista por Digimon não é restrição, é o que cada um desbloqueia.
+
+A tela **Skills** (botão no cabeçalho, atalho `S`) junta as 169 attachment skills distintas: busca por nome/efeito, filtro por tipo e elemento, ordenação por A–Z, mais Digimon ou SP mais baixo. Cada card mostra poder, elemento, SP, o texto do efeito e quem destrava — clicar num nome abre a ficha do Digimon.
+
+Além disso, qualquer skill marcada com `data-skill` abre um **cartão flutuante** no hover (ou no toque, no celular) com poder, número de golpes, alvo, SP, elemento, tipo e o efeito completo — na comparação, na ficha e na biblioteca.

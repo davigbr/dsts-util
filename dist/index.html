@@ -321,6 +321,67 @@
     .hs b { font-size: 18px; }
     #tour-card { max-width: calc(100vw - 24px); }
   }
+  /* ---- catálogo de skills ---- */
+  #skills { position: fixed; inset: 0; z-index: 45; background: #0f131b; display: none; flex-direction: column; }
+  #skills.open { display: flex; }
+  .sk-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line);
+    flex-wrap: wrap; }
+  .sk-top h2 { font-size: 15px; margin: 0; letter-spacing: -.2px; white-space: nowrap; }
+  .sk-count { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sk-tools { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; align-items: center; }
+  .sk-tools input, .sk-tools select { height: 30px; border-radius: 8px; background: rgba(255,255,255,.05);
+    border: 1px solid var(--line2); color: var(--fg); font-size: 11.5px; padding: 0 8px; }
+  .sk-tools input { width: 190px; }
+  .sk-tools input::placeholder { color: #6f7c8d; }
+  .sk-note { margin: 0; padding: 9px 16px; font-size: 11.5px; line-height: 1.5; color: var(--muted);
+    border-bottom: 1px solid var(--line); background: rgba(255,255,255,.015); }
+  #sk-body { flex: 1; overflow-y: auto; padding: 14px 16px 40px; display: grid; gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-content: start; }
+  .sk-card { border: 1px solid var(--line); border-radius: 11px; padding: 11px 12px; background: rgba(255,255,255,.025); }
+  .sk-head { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .sk-name { font-size: 12.5px; font-weight: 650; }
+  .sk-head .el { font-size: 10px; padding: 1px 6px; border: 1px solid; border-radius: 999px; }
+  .sk-head .sp, .sk-head .kind { font-size: 10px; color: var(--muted); }
+  .sk-head .kind { text-transform: uppercase; letter-spacing: .4px; }
+  .sk-eff { margin: 6px 0 8px; font-size: 11px; line-height: 1.5; color: #97a3b4; }
+  .sk-owners { display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+    border-top: 1px solid var(--line); padding-top: 8px; }
+  .sk-ow-lab { font-size: 10px; color: #6f7c8d; text-transform: uppercase; letter-spacing: .4px;
+    margin-right: 2px; }
+  .sk-ow { font-size: 10.5px; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--line2);
+    background: rgba(255,255,255,.04); color: var(--fg); }
+  .sk-ow:hover { border-color: var(--accent); color: var(--accent); }
+  .sk-ow i { font-style: normal; color: var(--muted); margin-left: 4px; }
+  .sk-more { font-size: 10.5px; color: var(--accent); padding: 2px 4px; }
+  .sk-empty { color: var(--muted); font-size: 12px; padding: 20px 2px; }
+  @media (max-width: 720px) {
+    .sk-top { padding: 10px 12px; }
+    .sk-tools { width: 100%; margin-left: 0; }
+    .sk-tools input { flex: 1 1 140px; width: auto; }
+    #sk-body { grid-template-columns: 1fr; padding: 10px 12px 30px; }
+  }
+  /* ---- cartão flutuante de skill ---- */
+  #skilltip { position: fixed; z-index: 95; display: none; max-width: 300px; padding: 10px 11px;
+    background: #171d29; border: 1px solid var(--line2); border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.55); pointer-events: none; }
+  #skilltip.on { display: block; }
+  .st-head b { font-size: 12.5px; letter-spacing: -.1px; }
+  .st-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 0; }
+  .st-el { font-size: 10px; padding: 1px 6px; border: 1px solid; border-radius: 999px; }
+  .st-kind { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px;
+    border: 1px solid var(--line2); border-radius: 999px; padding: 1px 6px; }
+  .st-sp { font-size: 10px; color: var(--muted); }
+  .st-rows { margin-top: 8px; display: grid; gap: 3px; }
+  .st-row { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; }
+  .st-row span { color: #7f8b9c; }
+  .st-row b { font-variant-numeric: tabular-nums; }
+  .st-eff { margin: 8px 0 0; font-size: 10.5px; line-height: 1.5; color: #97a3b4; }
+  .cmp-skills li[data-skill] { cursor: help; }
+  .cmp-skills li[data-skill]:hover { color: #fff; }
+  .cmp-el { font-size: 10px; opacity: .85; }
+  .cmp-pow { font-size: 9.5px; color: #241a08; background: #f0b23f; border-radius: 4px;
+    padding: 0 4px; margin-left: 4px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .skill:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
   #compare { position: fixed; inset: 0; z-index: 42; background: #0f131b; display: none; flex-direction: column; }
   #compare.open { display: flex; }
   .cmp-top { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
@@ -727,6 +788,7 @@
     <button class="hbtn on" id="toggle-filters" data-i18n="nav.filters">Filters</button>
     <button class="hbtn" id="toggle-list" data-i18n="nav.list" data-i18n-title="nav.listTip" title="Filtered Digimon as a list">List</button>
     <button class="hbtn" id="toggle-compare" data-i18n-title="nav.compareTip" title="Compare two Digimon (C)"><span class="lbl" data-i18n="nav.compare">Compare</span></button>
+    <button class="hbtn" id="toggle-skills" data-i18n-title="nav.skillsTip" title="Skills / discs (S)"><span class="lbl" data-i18n="nav.skills">Skills</span></button>
     <button class="hbtn" id="toggle-routes" data-i18n-title="nav.routesTip" title="Evolution routes (R)"><span class="lbl" data-i18n="nav.routes">Routes</span></button>
     <button class="hbtn" id="toggle-team" data-i18n-title="nav.teamTip" title="Team builder (T)"><span class="lbl" data-i18n="nav.team">Team</span><span class="badge"></span></button>
     <button class="hbtn" id="viewbtn"><span class="lbl" data-i18n="nav.view">View</span> ▾</button>
@@ -843,6 +905,22 @@
     <button class="d-close" id="cmp-close" title="Fechar">×</button>
   </div>
   <div id="cmp-body"></div>
+</div>
+
+<div id="skills">
+  <div class="sk-top">
+    <h2 data-i18n="sk.title">Skills</h2>
+    <span class="sk-count" id="sk-count"></span>
+    <div class="sk-tools">
+      <input id="sk-q" type="search" data-i18n-ph="sk.searchPh" placeholder="Search a skill" />
+      <select id="sk-kind" data-i18n-title="sk.kindFilter" title="Type"></select>
+      <select id="sk-el" data-i18n-title="sk.elFilter" title="Element"></select>
+      <select id="sk-sort" data-i18n-title="sk.sortBy" title="Order"></select>
+    </div>
+    <button class="d-close" id="sk-close" data-i18n-title="sk.close" title="Close">×</button>
+  </div>
+  <p class="sk-note" data-i18n="sk.note">Any Digimon can equip any of these in its 4 attachment slots — what changes is which Digimon unlocks it by leveling (and therefore turns it into a disc).</p>
+  <div id="sk-body"></div>
 </div>
 
 <div id="routes">
@@ -964,6 +1042,8 @@ const LOCALES = {
     "home.routes.d": "From your current team, four algorithms suggest balanced targets and the exact steps with rank and stat requirements.",
     "home.compare.t": "Side-by-side compare",
     "home.compare.d": "Two Digimon, stat by stat, with deltas, tiers in both scales and the weaknesses only one of them has.",
+    "home.skills.t": "Skill and disc library",
+    "home.skills.d": "All 169 attachment skills with power, element and SP, plus which Digimon unlocks each one and at what level. Hover a skill anywhere to see the numbers.",
 
     "tour.replay": "Show the tour again",
     "tour.step": "Step {n} of {total}",
@@ -1220,6 +1300,36 @@ const LOCALES = {
     "rt.helpNav4": "<b>Click</b> a Digimon to select it — details show in the panel, with shortcuts to open the profile or add it to the team.",
     "rt.helpNav5": "<b>Double click</b> opens the full profile.",
     "rt.helpNav6": "<b>R</b> opens and closes this screen · <b>Esc</b> closes.",
+    "nav.skills": "Skills",
+    "nav.skillsTip": "Every attachment skill and who unlocks it (S)",
+    "tip.power": "Power",
+    "tip.target": "Target",
+    "tip.type": "Type",
+    "tip.signature": "Signature (fixed)",
+    "tip.attachment": "Attachment skill",
+    "tip.unlockedBy": "Unlocked by",
+    "sk.title": "Skills",
+    "sk.searchPh": "Search a skill or its effect",
+    "sk.count": "{n} of {total} skills",
+    "sk.unlockedBy": "unlocked by {n}:",
+    "sk.more": "+{n} more",
+    "sk.empty": "No skill matches these filters.",
+    "sk.allKinds": "All types",
+    "sk.allElems": "All elements",
+    "sk.kindFilter": "Type",
+    "sk.elFilter": "Element",
+    "sk.sortBy": "Order",
+    "sk.sortName": "A–Z",
+    "sk.sortShared": "Most Digimon",
+    "sk.sortSp": "Cheapest SP",
+    "sk.close": "Close",
+    "sk.note": "Any Digimon can equip any of these in its 4 attachment slots — what changes is which Digimon unlocks it by leveling, turning it into a disc.",
+    "sk.kind.Physical": "Physical",
+    "sk.kind.Magic": "Magic",
+    "sk.kind.Buff": "Buff",
+    "sk.kind.Debuff": "Debuff",
+    "sk.kind.Recovery": "Recovery",
+    "sk.kind.StatusAilment": "Status ailment",
     "rt.title": "Evolution routes",
     "rt.help": "？ How it works",
     "rt.helpTip": "How to read this screen",
@@ -1314,6 +1424,8 @@ const LOCALES = {
     "home.routes.d": "A partir do time atual, quatro algoritmos sugerem alvos equilibrados e os passos exatos com rank e stats exigidos.",
     "home.compare.t": "Comparação lado a lado",
     "home.compare.d": "Dois Digimon, stat por stat, com diferenças, tiers nas duas escalas e as fraquezas que só um deles tem.",
+    "home.skills.t": "Biblioteca de skills e discos",
+    "home.skills.d": "As 169 attachment skills com poder, elemento e SP, e qual Digimon destrava cada uma e em que nível. Passe o mouse em qualquer skill para ver os números.",
 
     "tour.replay": "Ver o tour de novo",
     "tour.step": "Passo {n} de {total}",
@@ -1570,6 +1682,36 @@ const LOCALES = {
     "rt.helpNav4": "<b>Clique</b> num Digimon para selecionar — os detalhes aparecem no painel, com atalho para abrir a ficha ou colocar no time.",
     "rt.helpNav5": "<b>Duplo clique</b> abre a ficha completa.",
     "rt.helpNav6": "<b>R</b> abre e fecha esta tela · <b>Esc</b> fecha.",
+    "nav.skills": "Skills",
+    "nav.skillsTip": "Todas as attachment skills e quem as destrava (S)",
+    "tip.power": "Poder",
+    "tip.target": "Alvo",
+    "tip.type": "Tipo",
+    "tip.signature": "Assinatura (fixa)",
+    "tip.attachment": "Attachment skill",
+    "tip.unlockedBy": "Destravada por",
+    "sk.title": "Skills",
+    "sk.searchPh": "Buscar skill ou efeito",
+    "sk.count": "{n} de {total} skills",
+    "sk.unlockedBy": "destravada por {n}:",
+    "sk.more": "+{n} mais",
+    "sk.empty": "Nenhuma skill com esses filtros.",
+    "sk.allKinds": "Todos os tipos",
+    "sk.allElems": "Todos os elementos",
+    "sk.kindFilter": "Tipo",
+    "sk.elFilter": "Elemento",
+    "sk.sortBy": "Ordem",
+    "sk.sortName": "A–Z",
+    "sk.sortShared": "Mais Digimon",
+    "sk.sortSp": "SP mais baixo",
+    "sk.close": "Fechar",
+    "sk.note": "Qualquer Digimon equipa qualquer uma delas nos 4 slots de attachment — o que muda é qual Digimon a destrava subindo de nível, virando disco.",
+    "sk.kind.Physical": "Físico",
+    "sk.kind.Magic": "Mágico",
+    "sk.kind.Buff": "Buff",
+    "sk.kind.Debuff": "Debuff",
+    "sk.kind.Recovery": "Recuperação",
+    "sk.kind.StatusAilment": "Status",
     "rt.title": "Rotas de evolução",
     "rt.help": "？ Como funciona",
     "rt.helpTip": "Como ler esta tela",
@@ -2444,6 +2586,7 @@ function rerenderAll() {
   const hmain = document.getElementById("hint-main");
   if (hmain) hmain.innerHTML = t("hint.canvas");
   if (typeof renderHome === "function") renderHome();
+  if (typeof initSkills === "function") initSkills();
   updateTeamBadge();
   draw();
 }
@@ -2740,6 +2883,7 @@ function evoRow(e, reverse) {
 
 function skillRow(s) {
   const d = el("div", "skill");
+  if (s.name) { d.dataset.skill = s.name; d.tabIndex = 0; }
   const top = el("div", "skill-top");
   if (s.lv) top.appendChild(el("span", "lv", `Lv.${s.lv}`));
   if (s.el && s.el !== "No Element") {
@@ -3310,6 +3454,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     computeLayout();
     fitToView(true);
     draw();
+    if (typeof initSkillTip === "function") initSkillTip();
+    if (typeof initSkills === "function") initSkills();
     if (typeof initOnboarding === "function") initOnboarding();
   });
 
@@ -4477,6 +4623,15 @@ function toggleCompare() {
   else openCompare();
 }
 
+function cmpSkillLI(s) {
+  const col = EL_COLOR[s.el] || "#ddd";
+  const pw = /power\s+(\d+(?:\.\d+)?)/i.exec((s.eff || "").replace(/\*\*/g, ""));
+  const hits = /(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)\s*hit/i.exec((s.eff || "").replace(/\*\*/g, ""));
+  const pow = pw ? `<span class="cmp-pow">${hits ? pw[1] + "×" + hits[2] : pw[1]}</span>` : "";
+  const el = s.el && s.el !== "No Element" && s.el !== "Null" ? `<span class="cmp-el" style="color:${col}">${s.el}</span>` : "";
+  return `<li data-skill="${s.name}"><b style="color:${col}">${s.name}</b> ${el}<em>${s.sp || ""}SP</em>${pow}</li>`;
+}
+
 function cmpSuggest(q) {
   const s = (q || "").trim().toLowerCase();
   if (s.length < 2) return [];
@@ -4634,9 +4789,9 @@ function renderCompare() {
       ${resRow(t("cmp.onlyB"), { a: [], b: onlyB }, e => EL_COLOR[e])}
       <div class="cmp-sep">${t("detail.specials")}</div>
       <div class="cmp-row">
-        <div class="cmp-cell a"><ul class="cmp-skills">${skillsA.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
+        <div class="cmp-cell a"><ul class="cmp-skills">${skillsA.map(cmpSkillLI).join("") || '<li class="cmp-none">—</li>'}</ul></div>
         <div class="cmp-lab">${t("cmp.specials")}</div>
-        <div class="cmp-cell b"><ul class="cmp-skills">${skillsB.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
+        <div class="cmp-cell b"><ul class="cmp-skills">${skillsB.map(cmpSkillLI).join("") || '<li class="cmp-none">—</li>'}</ul></div>
         <div class="cmp-flag"></div>
       </div>
       ${shared.length ? `<p class="cmp-shared">${t("cmp.shared", { list: shared.join(", ") })}</p>` : ""}
@@ -4688,6 +4843,323 @@ function cmpWire() {
 </script>
 <script>
 /* ============================================================
+   SKILLTIP — cartão flutuante com os detalhes de uma skill
+   Qualquer elemento com data-skill="<nome>" mostra o cartão no
+   hover/focus (e no toque, em telas pequenas).
+   ============================================================ */
+
+let SKILL_DB = null;
+
+function skillDB() {
+  if (SKILL_DB) return SKILL_DB;
+  const db = new Map();
+  const add = (s, kindOf) => {
+    if (!s || !s.name) return;
+    const prev = db.get(s.name);
+    if (prev && prev.kindOf === "signature") return;
+    db.set(s.name, {
+      name: s.name,
+      el: s.el || "",
+      sp: s.sp || "",
+      kind: s.kind || "",
+      eff: (s.eff || "").replace(/\*\*/g, ""),
+      kindOf,
+      users: prev ? prev.users : 0,
+    });
+  };
+  DATA.nodes.forEach(n => {
+    (n.special || []).forEach(s => add(s, "signature"));
+    (n.skills || []).forEach(s => {
+      const cur = db.get(s.name);
+      if (cur) { cur.users++; return; }
+      add(s, "attachment");
+      const e = db.get(s.name);
+      if (e) e.users = 1;
+    });
+  });
+  SKILL_DB = db;
+  return db;
+}
+
+function skillMeta(name) {
+  const e = skillDB().get(name);
+  if (!e) return null;
+  const eff = e.eff;
+  const pw = /power\s+(\d+(?:\.\d+)?)/i.exec(eff);
+  const hits = /(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)\s*hit/i.exec(eff);
+  const tgt = /target\s*:\s*([^.|]+)/i.exec(eff);
+  return { ...e, power: pw ? pw[1] : null, hits: hits ? { base: hits[1], n: hits[2] } : null, target: tgt ? tgt[1].trim() : "" };
+}
+
+function skillTipHTML(name) {
+  const m = skillMeta(name);
+  if (!m) return "";
+  const elColor = EL_COLOR[m.el] || "#8b98ab";
+  const chips = [];
+  if (m.el && m.el !== "No Element" && m.el !== "Null") chips.push(`<span class="st-el" style="color:${elColor};border-color:${elColor}55">${m.el}</span>`);
+  if (m.kind) chips.push(`<span class="st-kind">${t("sk.kind." + String(m.kind).replace(" ", ""))}</span>`);
+  if (m.sp) chips.push(`<span class="st-sp">${m.sp} SP</span>`);
+
+  const rows = [];
+  if (m.power) {
+    const dmg = m.hits ? `${m.power} × ${m.hits.n}` : m.power;
+    rows.push(`<div class="st-row"><span>${t("tip.power")}</span><b>${dmg}</b></div>`);
+  }
+  if (m.target) rows.push(`<div class="st-row"><span>${t("tip.target")}</span><b>${m.target}</b></div>`);
+  if (m.kindOf === "signature") rows.push(`<div class="st-row"><span>${t("tip.type")}</span><b>${t("tip.signature")}</b></div>`);
+  else rows.push(`<div class="st-row"><span>${t("tip.type")}</span><b>${t("tip.attachment")}</b></div>`);
+  if (m.kindOf === "attachment" && m.users) rows.push(`<div class="st-row"><span>${t("tip.unlockedBy")}</span><b>${m.users}</b></div>`);
+
+  return `
+    <div class="st-head"><b>${m.name}</b></div>
+    <div class="st-chips">${chips.join("")}</div>
+    ${rows.length ? `<div class="st-rows">${rows.join("")}</div>` : ""}
+    ${m.eff ? `<p class="st-eff">${m.eff}</p>` : ""}`;
+}
+
+function ensureTip() {
+  let tip = document.getElementById("skilltip");
+  if (!tip) {
+    tip = document.createElement("div");
+    tip.id = "skilltip";
+    document.body.appendChild(tip);
+  }
+  return tip;
+}
+
+function showTip(el) {
+  const name = el.dataset.skill;
+  if (!name) return;
+  const html = skillTipHTML(name);
+  if (!html) return;
+  const tip = ensureTip();
+  tip.innerHTML = html;
+  tip.classList.add("on");
+
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  const M = 8;
+  // alvo fora da tela (mobile): centraliza antes de medir
+  const r0 = el.getBoundingClientRect();
+  if (r0.top < 70 || r0.bottom > window.innerHeight - 70) el.scrollIntoView({ block: "center" });
+  const r = el.getBoundingClientRect();
+  let left = Math.min(window.innerWidth - tw - M, Math.max(M, r.left + r.width / 2 - tw / 2));
+  let top = r.bottom + 6;
+  if (top + th > window.innerHeight - M) top = r.top - th - 6;
+  top = Math.min(Math.max(M, top), Math.max(M, window.innerHeight - th - M));
+  tip.style.left = left + "px";
+  tip.style.top = top + "px";
+  tip.dataset.active = name;
+  window.__skTipAt = Date.now();  // ignora o scroll disparado pelo próprio scrollIntoView
+}
+
+function hideTip() {
+  const tip = document.getElementById("skilltip");
+  if (tip) { tip.classList.remove("on"); tip.dataset.active = ""; }
+}
+
+function initSkillTip() {
+  if (window.__skTipBound) return;
+  window.__skTipBound = true;
+  let timer = null;
+  document.addEventListener("mouseover", ev => {
+    const el = ev.target.closest("[data-skill]");
+    if (!el) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => showTip(el), 120);
+  });
+  document.addEventListener("mouseout", ev => {
+    if (ev.target.closest("[data-skill]")) { clearTimeout(timer); hideTip(); }
+  });
+  document.addEventListener("focusin", ev => {
+    const el = ev.target.closest("[data-skill]");
+    if (el) showTip(el);
+  });
+  document.addEventListener("focusout", ev => {
+    if (ev.target.closest("[data-skill]")) hideTip();
+  });
+  // toque (ou clique): mostra; clicar de novo na mesma skill esconde
+  document.addEventListener("click", ev => {
+    const el = ev.target.closest("[data-skill]");
+    if (!el) return;
+    const tip = document.getElementById("skilltip");
+    if (tip && tip.classList.contains("on") && tip.dataset.active === el.dataset.skill) { hideTip(); return; }
+    showTip(el);
+  });
+  window.addEventListener("scroll", () => {
+    if (Date.now() - (window.__skTipAt || 0) < 300) return;
+    hideTip();
+  }, true);
+  window.addEventListener("resize", hideTip);
+}
+
+</script>
+<script>
+/* ============================================================
+   SKILLS — catálogo de attachment skills (discos)
+   Cada skill diz quem a destrava e em que nível; qualquer Digimon
+   pode equipar qualquer uma delas (4 slots).
+   ============================================================ */
+
+const SK_KINDS = ["Physical", "Magic", "Buff", "Debuff", "Recovery", "Status Ailment"];
+const SK = { q: "", kind: "", el: "", sort: "name", expanded: new Set() };
+let SKILL_INDEX = null;
+
+function skillIndex() {
+  if (SKILL_INDEX) return SKILL_INDEX;
+  const map = new Map();
+  DATA.nodes.forEach(n => (n.skills || []).forEach(s => {
+    if (!s || !s.name) return;
+    let e = map.get(s.name);
+    if (!e) {
+      e = { name: s.name, el: s.el || "", sp: +s.sp || 0, kind: s.kind || "", eff: s.eff || "", owners: [] };
+      map.set(s.name, e);
+    }
+    if (!e.owners.some(o => o.slug === n.slug)) e.owners.push({ name: n.name, slug: n.slug, lv: +s.lv || 0 });
+  }));
+  map.forEach(e => e.owners.sort((a, b) => (a.lv || 999) - (b.lv || 999)));
+  SKILL_INDEX = [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  return SKILL_INDEX;
+}
+
+function skFiltered() {
+  const q = SK.q.trim().toLowerCase();
+  let list = skillIndex().filter(s => {
+    if (SK.kind && s.kind !== SK.kind) return false;
+    if (SK.el && s.el !== SK.el) return false;
+    if (!q) return true;
+    return s.name.toLowerCase().includes(q) || (s.eff || "").toLowerCase().includes(q);
+  });
+  if (SK.sort === "shared") list.sort((a, b) => b.owners.length - a.owners.length || a.name.localeCompare(b.name));
+  else if (SK.sort === "sp") list.sort((a, b) => a.sp - b.sp || a.name.localeCompare(b.name));
+  else list.sort((a, b) => a.name.localeCompare(b.name));
+  return list;
+}
+
+function skOwnerHTML(o) {
+  return `<button class="sk-ow" data-slug="${o.slug}">${o.name}${o.lv ? `<i>Lv.${o.lv}</i>` : ""}</button>`;
+}
+
+function skCardHTML(s) {
+  const owners = s.owners;
+  const open = SK.expanded.has(s.name);
+  const shown = open ? owners : owners.slice(0, 6);
+  const rest = owners.length - shown.length;
+  const elChip = s.el && s.el !== "No Element"
+    ? `<span class="el" style="color:${EL_COLOR[s.el] || "var(--muted)"};border-color:${(EL_COLOR[s.el] || "#666")}55">${s.el}</span>`
+    : `<span class="el">—</span>`;
+  return `
+    <article class="sk-card">
+      <div class="sk-head">
+        <span class="sk-name">${s.name}</span>
+        ${elChip}
+        <span class="sp">${s.sp ? s.sp + " SP" : ""}</span>
+        <span class="kind">${s.kind ? t("sk.kind." + s.kind.replace(" ", "")) : ""}</span>
+      </div>
+      <p class="sk-eff">${(s.eff || "").replace(/\*\*/g, "")}</p>
+      <div class="sk-owners">
+        <span class="sk-ow-lab">${t("sk.unlockedBy", { n: owners.length })}</span>
+        ${shown.map(skOwnerHTML).join("")}
+        ${rest > 0 ? `<button class="sk-more" data-more="${s.name}">${t("sk.more", { n: rest })}</button>` : ""}
+      </div>
+    </article>`;
+}
+
+function renderSkills() {
+  const body = document.getElementById("sk-body");
+  const cnt = document.getElementById("sk-count");
+  if (!body) return;
+  const list = skFiltered();
+  if (cnt) cnt.textContent = t("sk.count", { n: list.length, total: skillIndex().length });
+  if (!list.length) {
+    body.innerHTML = `<p class="sk-empty">${t("sk.empty")}</p>`;
+    return;
+  }
+  body.innerHTML = list.map(skCardHTML).join("");
+}
+
+function openSkills() {
+  const box = document.getElementById("skills");
+  if (!box) return;
+  if (typeof closeHome === "function") closeHome();
+  if (typeof closeCompare === "function") closeCompare();
+  if (document.getElementById("routes")?.classList.contains("open") && typeof closeRoutes === "function") closeRoutes();
+  box.classList.add("open");
+  renderSkills();
+  const q = document.getElementById("sk-q");
+  if (q && window.innerWidth > 720) q.focus();
+}
+
+function closeSkills() {
+  document.getElementById("skills")?.classList.remove("open");
+}
+
+function toggleSkills() {
+  const box = document.getElementById("skills");
+  if (box && box.classList.contains("open")) closeSkills();
+  else openSkills();
+}
+
+let SK_BOUND = false;
+function initSkills() {
+  const btn = document.getElementById("toggle-skills");
+  if (btn) btn.onclick = toggleSkills;
+  const close = document.getElementById("sk-close");
+  if (close) close.onclick = closeSkills;
+
+  const q = document.getElementById("sk-q");
+  if (q) q.oninput = () => { SK.q = q.value; renderSkills(); };
+
+  const kind = document.getElementById("sk-kind");
+  if (kind) {
+    kind.innerHTML = `<option value="">${t("sk.allKinds")}</option>` +
+      SK_KINDS.map(k => `<option value="${k}">${t("sk.kind." + k.replace(" ", ""))}</option>`).join("");
+    kind.value = SK.kind;
+    kind.onchange = () => { SK.kind = kind.value; renderSkills(); };
+  }
+
+  const el = document.getElementById("sk-el");
+  if (el) {
+    el.innerHTML = `<option value="">${t("sk.allElems")}</option>` +
+      ELEMENTS.map(e => `<option value="${e}">${e}</option>`).join("");
+    el.value = SK.el;
+    el.onchange = () => { SK.el = el.value; renderSkills(); };
+  }
+
+  const sort = document.getElementById("sk-sort");
+  if (sort) {
+    sort.innerHTML = `<option value="name">${t("sk.sortName")}</option>
+      <option value="shared">${t("sk.sortShared")}</option>
+      <option value="sp">${t("sk.sortSp")}</option>`;
+    sort.value = SK.sort;
+    sort.onchange = () => { SK.sort = sort.value; renderSkills(); };
+  }
+
+  document.getElementById("sk-body")?.addEventListener("click", ev => {
+    const own = ev.target.closest(".sk-ow");
+    if (own) { closeSkills(); openNodeBySlug(own.dataset.slug); return; }
+    const more = ev.target.closest(".sk-more");
+    if (more) {
+      const nm = more.dataset.more;
+      SK.expanded.add(nm);
+      renderSkills();
+    }
+  });
+
+  if (SK_BOUND) { if (document.getElementById("skills")?.classList.contains("open")) renderSkills(); return; }
+  SK_BOUND = true;
+  window.addEventListener("keydown", ev => {
+    if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "SELECT") {
+      if (ev.key === "Escape") closeSkills();
+      return;
+    }
+    if ((ev.key === "s" || ev.key === "S") && !ev.metaKey && !ev.ctrlKey && !ev.altKey) toggleSkills();
+    if (ev.key === "Escape" && document.getElementById("skills")?.classList.contains("open")) closeSkills();
+  });
+}
+
+</script>
+<script>
+/* ============================================================
    ONBOARDING — página inicial + tutorial guiado (spotlight)
    ============================================================ */
 
@@ -4698,6 +5170,7 @@ const HOME_FEATURES = [
   { k: "team", icon: "✚" },
   { k: "routes", icon: "⇢" },
   { k: "compare", icon: "⇄" },
+  { k: "skills", icon: "✦" },
 ];
 
 function homeSeen() {

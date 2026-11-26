@@ -9,6 +9,7 @@ const HOME_FEATURES = [
   { k: "team", icon: "✚" },
   { k: "routes", icon: "⇢" },
   { k: "compare", icon: "⇄" },
+  { k: "skills", icon: "✦" },
 ];
 
 function homeSeen() {

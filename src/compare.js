@@ -34,6 +34,15 @@ function toggleCompare() {
   else openCompare();
 }
 
+function cmpSkillLI(s) {
+  const col = EL_COLOR[s.el] || "#ddd";
+  const pw = /power\s+(\d+(?:\.\d+)?)/i.exec((s.eff || "").replace(/\*\*/g, ""));
+  const hits = /(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)\s*hit/i.exec((s.eff || "").replace(/\*\*/g, ""));
+  const pow = pw ? `<span class="cmp-pow">${hits ? pw[1] + "×" + hits[2] : pw[1]}</span>` : "";
+  const el = s.el && s.el !== "No Element" && s.el !== "Null" ? `<span class="cmp-el" style="color:${col}">${s.el}</span>` : "";
+  return `<li data-skill="${s.name}"><b style="color:${col}">${s.name}</b> ${el}<em>${s.sp || ""}SP</em>${pow}</li>`;
+}
+
 function cmpSuggest(q) {
   const s = (q || "").trim().toLowerCase();
   if (s.length < 2) return [];
@@ -191,9 +200,9 @@ function renderCompare() {
       ${resRow(t("cmp.onlyB"), { a: [], b: onlyB }, e => EL_COLOR[e])}
       <div class="cmp-sep">${t("detail.specials")}</div>
       <div class="cmp-row">
-        <div class="cmp-cell a"><ul class="cmp-skills">${skillsA.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
+        <div class="cmp-cell a"><ul class="cmp-skills">${skillsA.map(cmpSkillLI).join("") || '<li class="cmp-none">—</li>'}</ul></div>
         <div class="cmp-lab">${t("cmp.specials")}</div>
-        <div class="cmp-cell b"><ul class="cmp-skills">${skillsB.map(s => `<li><b style="color:${EL_COLOR[s.el] || "#ddd"}">${s.name}</b> <em>${s.el || ""} · ${s.sp || ""}SP</em></li>`).join("") || '<li class="cmp-none">—</li>'}</ul></div>
+        <div class="cmp-cell b"><ul class="cmp-skills">${skillsB.map(cmpSkillLI).join("") || '<li class="cmp-none">—</li>'}</ul></div>
         <div class="cmp-flag"></div>
       </div>
       ${shared.length ? `<p class="cmp-shared">${t("cmp.shared", { list: shared.join(", ") })}</p>` : ""}

@@ -428,6 +428,7 @@ function rerenderAll() {
   const hmain = document.getElementById("hint-main");
   if (hmain) hmain.innerHTML = t("hint.canvas");
   if (typeof renderHome === "function") renderHome();
+  if (typeof initSkills === "function") initSkills();
   updateTeamBadge();
   draw();
 }
@@ -724,6 +725,7 @@ function evoRow(e, reverse) {
 
 function skillRow(s) {
   const d = el("div", "skill");
+  if (s.name) { d.dataset.skill = s.name; d.tabIndex = 0; }
   const top = el("div", "skill-top");
   if (s.lv) top.appendChild(el("span", "lv", `Lv.${s.lv}`));
   if (s.el && s.el !== "No Element") {
@@ -1294,6 +1296,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     computeLayout();
     fitToView(true);
     draw();
+    if (typeof initSkillTip === "function") initSkillTip();
+    if (typeof initSkills === "function") initSkills();
     if (typeof initOnboarding === "function") initOnboarding();
   });
 
