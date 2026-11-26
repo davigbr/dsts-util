@@ -98,6 +98,39 @@ def _assign(nodes, power, pu, score, pre="", label=None):
             nd["glabel"] = label
 
 
+def skill_kind(eff, kind=None):
+    """A base HTML trouxe o SP no campo `kind`; recupera o tipo pelo texto do efeito."""
+    if kind and not str(kind).strip().isdigit():
+        return kind
+    t = (eff or "").lower()
+    if "physical" in t or "physical attack" in t:
+        return "Physical"
+    if "magic" in t:
+        return "Magic"
+    if "recover" in t or "restore" in t or "heal" in t:
+        return "Recovery"
+    if t.startswith("removes") and ("buff" in t or "abnormalit" in t or "injury" in t):
+        return "Debuff" if "stat buffs" in t else "Buff"
+    if "lower" in t or "reduce" in t or "decrease" in t:
+        return "Debuff"
+    if "boost" in t or "increase" in t or "raise" in t or "cure" in t:
+        return "Buff"
+    if "chance" in t or "apply" in t:
+        return "Status Ailment"
+    return kind or ""
+
+
+def norm_skills(items):
+    out = []
+    for s in items or []:
+        if not isinstance(s, dict):
+            continue
+        s = dict(s)
+        s["kind"] = skill_kind(s.get("eff"), s.get("kind"))
+        out.append(s)
+    return out
+
+
 def score_nodes(nodes):
     """Força global (os 475) e força relativa à geração (comparação justa)."""
     power, pu, score = _score_group(nodes)
@@ -134,8 +167,8 @@ for item in CAT:
         "type": pick(a, b, "type", ""),
         "traits": pick(a, b, "traits", []),
         "stats": pick(a, b, "stats", {}),
-        "special": pick(a, b, "special", []),
-        "skills": pick(a, b, "skills", []),
+        "special": norm_skills(pick(a, b, "special", [])),
+        "skills": norm_skills(pick(a, b, "skills", [])),
         "desc": pick(a, b, "desc", ""),
         "resA": pick(a, b, "resA", {}),
         "resE": pick(a, b, "resE", {}),
